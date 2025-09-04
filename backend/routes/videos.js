@@ -45,11 +45,11 @@ router.post('/upload',verifyToken, upload.single('video'), async (req, res) => {
         const { title, description } = req.body;
 
         const newVideo = new Video({
-            title,
-            description,
-            videoUrl: `/uploads/videos/${req.file.filename}`,
-            thumbnailUrl: '/uploads/thumbnails/default.jpg',
-            creator: req.userId,
+            title: req.body.title,
+            description:req.body.description,
+            videoURL: `/uploads/videos/${req.file.filename}`,
+            thumbnailURL: '/uploads/thumbnails/default.jpg',
+            creator: req.userID || 'uknown channel',
             duration: 0
         });
 
