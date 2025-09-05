@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const multer = require('multer');
 const path = require('path');
+const ffmpeg = require('fluent-ffmpeg');
 const Video = require('../models/Video');
 const verifyToken = require('../middleware/auth');
 
@@ -42,22 +43,52 @@ router.get('/', async (req, res) => {
 
 router.post('/upload',verifyToken, upload.single('video'), async (req, res) => {
     try {
-        const { title, description } = req.body;
+        if(!req.file) {
+            return res.status(400).json({error: 'No video file provided'});
+        }
 
+        
+        // Generate unique thumbnail filename
+        const videoPath = path.join('uploads/videos', req.file.filename);
+        const thumbnailFilename = `thumb-${Date.now()}-${Math.round(Math.random() * 1E9)}.jpg`;
+        const thumbnailPath = 'uploads/thumbnails';
+
+        // Create video document with temporary thumbnail URL
         const newVideo = new Video({
             title: req.body.title,
-            description:req.body.description,
+            description: req.body.description,
             videoURL: `/uploads/videos/${req.file.filename}`,
-            thumbnailURL: '/uploads/thumbnails/default.jpg',
-            creator: req.userID || 'uknown channel',
+            thumbnailURL: `/uploads/thumbnails/${thumbnailFilename}`, // Will be generated
+            creator: req.userID,
             duration: 0
         });
 
+        // Generate thumbnail from video
+        ffmpeg(videoPath)
+            .on('end', async () => {
+                console.log('Thumbnail generated successfully!');
+                // Thumbnail is now saved, video document already has the correct path
+            })
+            .on('error', async (err) => {
+                console.error('Error generating thumbnail:', err);
+                // If thumbnail generation fails, update to use placeholder
+                newVideo.thumbnailURL = 'https://via.placeholder.com/320x180';
+                await newVideo.save();
+            })
+            .screenshots({
+                timestamps: ['00:00:01.000'], // Take screenshot at 1 second
+                filename: thumbnailFilename,
+                folder: thumbnailPath,
+                size: '320x180' // 16:9 aspect ratio for thumbnails
+            });
+
+        // Save video document immediately (thumbnail generates in background)
         await newVideo.save();
         res.json({message: 'Video Uploaded!', video: newVideo});
         
     }
     catch(error){
+        console.error('Upload error:', error);
         res.status(500).json({error: error.message});
     }
 });

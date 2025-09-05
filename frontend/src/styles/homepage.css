@@ -1,0 +1,50 @@
+/* HOMEPAGE STYLES */
+
+/* HomePage container */
+.HomePage {
+  padding: 20px;
+}
+
+/* Grid container for video cards */
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* Individual video card links */
+.video-card {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+/* Video card hover effect */
+.video-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Video thumbnail image */
+.video-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Video title */
+.video-card h3 {
+  margin-top: 10px;
+  font-size: 16px;
+  line-height: 1.2;
+  color: #030303;
+}
+
+/* Video metadata */
+.video-card p {
+  color: #606060;
+  font-size: 14px;
+  margin-top: 5px;
+}

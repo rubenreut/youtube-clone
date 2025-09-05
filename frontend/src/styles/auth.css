@@ -1,0 +1,59 @@
+/* LOGIN/REGISTER PAGE STYLES */
+
+/* Login and register page containers */
+.login-page,
+.register-page {
+  max-width: 400px;
+  margin: 80px auto;
+  padding: 40px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Login/register headings */
+.login-page h2,
+.register-page h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #030303;
+}
+
+/* Login/register input fields */
+.login-page input,
+.register-page input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Login/register submit buttons */
+.login-page button,
+.register-page button {
+  width: 100%;
+  padding: 12px;
+  background-color: #065fd4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Login/register helper text */
+.login-page p,
+.register-page p {
+  text-align: center;
+  margin-top: 20px;
+  color: #606060;
+}
+
+/* Login/register links */
+.login-page a,
+.register-page a {
+  color: #065fd4;
+  text-decoration: none;
+}

@@ -40,7 +40,7 @@ function HomePage(){
                     <Link key={video._id} to={`/video/${video._id}`} className="video-card">
                         <div>
                             <img
-                                src={video.thumbnailUrl || 'https://via.placeholder.com/300x200'}
+                                src={video.thumbnailURL ? `http://localhost:3099${video.thumbnailURL}` : 'https://via.placeholder.com/300x200'}
                                 alt={video.title}
                                 style={{width: '300px', height: '200px', objectFit: 'cover'}}
                             />

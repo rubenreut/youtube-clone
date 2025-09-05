@@ -1,0 +1,12 @@
+/* Main stylesheet that imports all component styles */
+
+/* Base styles and resets */
+@import './base.css';
+
+/* Component styles */
+@import './navbar.css';
+@import './homepage.css';
+@import './videopage.css';
+@import './uploadpage.css';
+@import './searchpage.css';
+@import './auth.css';

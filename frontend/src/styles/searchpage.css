@@ -1,0 +1,52 @@
+/* SEARCH PAGE STYLES */
+
+.search-page {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.search-results {
+  margin-top: 20px;
+}
+
+.search-result {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.search-result:hover {
+  background-color: #f5f5f5;
+}
+
+.search-result img {
+  width: 240px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.search-result div {
+  flex: 1;
+}
+
+.search-result h3 {
+  font-size: 18px;
+  margin-bottom: 5px;
+  color: #030303;
+}
+
+.search-result p {
+  color: #606060;
+  font-size: 13px;
+  line-height: 1.4;
+  margin-bottom: 5px;
+}
+
+.search-result small {
+  color: #606060;
+  font-size: 12px;
+}

@@ -1,0 +1,16 @@
+/* GLOBAL RESET AND BASE STYLES */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', Arial, sans-serif;
+  background-color: #f9f9f9;
+}
+
+.App {
+  min-height: 100vh;
+}
