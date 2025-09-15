@@ -7,6 +7,8 @@ import HomePage from './pages/HomePage';
 import UploadPage from './pages/UploadPage';
 import VideoPage from './pages/VideoPage';
 import SearchPage from './pages/SearchPage';
+import ChannelPage from './pages/ChannelPage';
+import EditVideoPage from './pages/EditVideoPage';
 
 function Layout({ children }) {
   const location = useLocation();
@@ -32,8 +34,10 @@ function App(){
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/upload" element={<UploadPage />} />
             <Route path="/video/:id" element={<VideoPage />} />
-            <Route path="/channel/:id" element={<div>Channel Page</div>} />
+            <Route path="/channel/:userId" element={<ChannelPage />} />
             <Route path="/search" element={<SearchPage />} />
+            <Route path ="/edit-video/:videoId" element ={<EditVideoPage/>}/>
+    
           </Routes>
         </Layout>
       </div>

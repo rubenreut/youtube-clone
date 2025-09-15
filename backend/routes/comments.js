@@ -23,11 +23,14 @@ router.get('/video/:videoId', async(req, res) => {
 //POST new comment
 router.post('/', verifyToken, async(req, res) => {
     try{
-        const{content, videoId, parentCommentId} = req.body;
+        // Accept both field names for compatibility
+        const content = req.body.content || req.body.text;
+        const videoId = req.body.videoId || req.body.video;
+        const parentCommentId = req.body.parentCommentId;
 
         const newComment = new Comment({
             content,
-            author: req.userId,
+            author: req.userID,  // Fixed: was req.userId, should be req.userID
             video: videoId,
             parentComment: parentCommentId || null
         });

@@ -96,22 +96,30 @@ router.post('/upload',verifyToken, upload.single('video'), async (req, res) => {
 //LIKE a video
 router.post('/:id/like', verifyToken, async (req, res) => {
     try{
+        if(!req.userID) {
+            return res.status(401).json({error: 'User ID not found in token'});
+        }
+
         const video = await Video.findById(req.params.id);
 
         if(!video){
             return res.status(404).json({error: 'Video not found'});
         }
 
-        const alreadyLiked = video.likes.includes(req.userId);
-        const dislikedIndex = video.dislikes.indexOf(req.userId);
+        const userId = req.userID.toString();
+        
+        // Check if already liked - handle null values in array
+        const alreadyLiked = video.likes.some(id => id && id.toString() === userId);
+        const dislikedIndex = video.dislikes.findIndex(id => id && id.toString() === userId);
 
         if(alreadyLiked){
-            video.likes = video.likes.filter(id => id.toString() !== req.userId);
+            // Remove like - filter out nulls and the user's ID
+            video.likes = video.likes.filter(id => id && id.toString() !== userId);
         }
         else{
-            //add like
-            video.likes.push(req.userId);
-            //remove dislike if exists
+            // Add like
+            video.likes.push(req.userID);
+            // Remove dislike if exists
             if(dislikedIndex > -1){
                 video.dislikes.splice(dislikedIndex, 1);
             }
@@ -125,7 +133,7 @@ router.post('/:id/like', verifyToken, async (req, res) => {
         });
     }
     catch(error){
-        res.status(500).json({ error: error.message});
+        res.status(500).json({ error: error.message });
     }
 
 });
@@ -133,24 +141,31 @@ router.post('/:id/like', verifyToken, async (req, res) => {
 //DISLIKE a video
 router.post('/:id/dislike', verifyToken, async (req, res) => {
         try{
+            if(!req.userID) {
+                return res.status(401).json({error: 'User ID not found in token'});
+            }
+
             const video = await Video.findById(req.params.id);
 
             if(!video){
                 return res.status(404).json({ error: 'Video not found'});
             }
 
-            //check if already disliked
-            const alreadyDisliked = video.dislikes.includes(req.userId);
-            const likedIndex = video.likes.indexOf(req.userId);
+            // Convert userID string to ObjectId for comparison
+            const userId = req.userID.toString();
+            
+            // Check if already disliked
+            const alreadyDisliked = video.dislikes.some(id => id.toString() === userId);
+            const likedIndex = video.likes.findIndex(id => id.toString() === userId);
 
             if(alreadyDisliked){
-                //Remove dislike
-                video.dislikes = video.dislikes.filter( id => id.toString() !== req.userId);
+                // Remove dislike
+                video.dislikes = video.dislikes.filter(id => id.toString() !== userId);
             }
             else{
-                //add dislike 
-                video.dislikes.push(req.userId);
-                //remove like if exists
+                // Add dislike 
+                video.dislikes.push(req.userID);
+                // Remove like if exists
                 if(likedIndex > -1){
                     video.likes.splice(likedIndex, 1);
                 }
@@ -206,7 +221,7 @@ router.post('/:id/dislike', verifyToken, async (req, res) => {
             }
 
             //incremenet views
-            video.view +=1;
+            video.views +=1;
             await video.save();
 
             res.json(video);
@@ -215,6 +230,29 @@ router.post('/:id/dislike', verifyToken, async (req, res) => {
             res.status(500).json({ error: error.message});
         }
     });
+
+// DELETE a video
+router.delete('/:id', verifyToken, async (req, res) => {
+    try {
+        const video = await Video.findById(req.params.id);
+        
+        if (!video) {
+            return res.status(404).json({ error: 'Video not found' });
+        }
+
+        // Check if user owns this video
+        if (video.creator.toString() !== req.userID) {
+            return res.status(403).json({ error: 'You can only delete your own videos' });
+        }
+
+        // Delete the video from database
+        await Video.findByIdAndDelete(req.params.id);
+        
+        res.json({ message: 'Video deleted successfully' });
+    } catch(error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 module.exports = router;
 

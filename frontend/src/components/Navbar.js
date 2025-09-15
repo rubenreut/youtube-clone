@@ -1,10 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 function Navbar() {
     const [searchQuery, setSearchQuery] = useState('');
+    const [userId, setUserId] = useState(null);
     const navigate = useNavigate();
     const token = localStorage.getItem('token');
+    
+    // Decode token to get user ID when component mounts
+    useEffect(() => {
+        if (token) {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                setUserId(payload._id);
+            } catch(error) {
+                console.error('Error decoding token:', error);
+            }
+        }
+    }, [token]);
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -40,6 +53,7 @@ function Navbar() {
                 {token ? (
                     <>
                         <Link to="/upload">Upload</Link>
+                        {userId && <Link to={`/channel/${userId}`}>My Channel</Link>}
                         <button onClick={handleLogout}>Logout</button>
                     </>
                 ) : (

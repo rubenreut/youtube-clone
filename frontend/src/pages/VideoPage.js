@@ -45,35 +45,68 @@ function VideoPage(){
     const handleLike = async () => {
         try{
             const token = localStorage.getItem('token');
+            if(!token) {
+                alert('Please login to like videos');
+                return;
+            }
+            
             const response = await axios.post(`http://localhost:3099/api/videos/${id}/like`, {}, {
                 headers: {'auth-token': token}
             });
 
-            setVideo( prev => ({
+            // Update video likes count from backend response
+            setVideo(prev => ({
                 ...prev,
-                likes: response.data.userLiked ? [...(prev.likes || []), 'currentUser'] : (prev.likes || []).filter(u => u !== 'currentUser')
+                likes: Array(response.data.likes).fill(null), // Create array with correct length
+                dislikes: Array(response.data.dislikes).fill(null)
             }));
-            setLiked(!liked);
-            if(disliked) setDisliked(false);
+            
+            setLiked(response.data.userLiked);
+            if(response.data.userLiked && disliked) {
+                setDisliked(false);
+            }
         }
-
         catch(error){
-            alert('Login to like videos');
+            console.error('Like error:', error);
+            if(error.response?.status === 401) {
+                alert('Please login to like videos');
+            } else {
+                alert('Error liking video');
+            }
         }
     };
 
     const handleDislike = async() => {
         try{
             const token = localStorage.getItem('token');
-            await axios.post(`http://localhost:3099/api/videos/${id}/dislike`, {}, {
+            if(!token) {
+                alert('Please login to dislike videos');
+                return;
+            }
+            
+            const response = await axios.post(`http://localhost:3099/api/videos/${id}/dislike`, {}, {
                 headers: { 'auth-token': token}
             });
-            setDisliked(!disliked);
-            if(liked) setLiked(false);
-            fetchVideo();
+            
+            // Update video dislikes count from backend response
+            setVideo(prev => ({
+                ...prev,
+                likes: Array(response.data.likes).fill(null),
+                dislikes: Array(response.data.dislikes).fill(null)
+            }));
+            
+            setDisliked(response.data.userDisliked);
+            if(response.data.userDisliked && liked) {
+                setLiked(false);
+            }
         }
         catch(error){
-            alert('Please login to dislike videos');
+            console.error('Dislike error:', error);
+            if(error.response?.status === 401) {
+                alert('Please login to dislike videos');
+            } else {
+                alert('Error disliking video');
+            }
         }
     };
 
@@ -177,18 +210,18 @@ function VideoPage(){
                             {comments.map(comment => (
                                 <div key={comment._id} className="comment">
                                     <div className="comment-avatar">
-                                        {comment.user?.username?.charAt(0)?.toUpperCase() || 'U'}
+                                        {comment.author?.username?.charAt(0)?.toUpperCase() || 'U'}
                                     </div>
                                     <div className="comment-content">
                                         <div className="comment-header">
                                             <span className="comment-author">
-                                                {comment.user?.username || 'Unknown User'}
+                                                {comment.author?.username || 'Unknown User'}
                                             </span>
                                             <span className="comment-time">
                                                 {new Date(comment.createdAt).toLocaleDateString()}
                                             </span>
                                         </div>
-                                        <p className="comment-text">{comment.text}</p>
+                                        <p className="comment-text">{comment.content}</p>
                                     </div>
                                 </div>
                             ))}

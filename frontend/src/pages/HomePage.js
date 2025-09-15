@@ -29,28 +29,50 @@ function HomePage(){
 
     return (
         <div className="HomePage">
-            <h2>All videos</h2>
-
-            <div className="video-grid">
-                {videos.length === 0 ? (
-                    <p>No Videos Yet. Be the first to upload </p>
-                ):(
-
+            <div className="sidebar">
+                <Link to="/" className="sidebar-item active">
+                    <span>🏠</span>
+                    <span>Home</span>
+                </Link>
+                <Link to="/trending" className="sidebar-item">
+                    <span>🔥</span>
+                    <span>Trending</span>
+                </Link>
+                <Link to="/subscriptions" className="sidebar-item">
+                    <span>📺</span>
+                    <span>Subscriptions</span>
+                </Link>
+                <hr />
+                <Link to="/library" className="sidebar-item">
+                    <span>📚</span>
+                    <span>Library</span>
+                </Link>
+                <Link to="/history" className="sidebar-item">
+                    <span>📜</span>
+                    <span>History</span>
+                </Link>
+            </div>
+            
+            <div className="main-content">
+                <div className="video-grid">
+                {videos.length === 0 ? (<p>No Videos Yet. Be the first to upload </p>):(
                 videos.map(video=> (
-                    <Link key={video._id} to={`/video/${video._id}`} className="video-card">
-                        <div>
+                    <div key={video._id} className="video-card">
+                        <Link to={`/video/${video._id}`} style={{textDecoration: 'none', color: 'inherit'}}>
                             <img
                                 src={video.thumbnailURL ? `http://localhost:3099${video.thumbnailURL}` : 'https://via.placeholder.com/300x200'}
                                 alt={video.title}
-                                style={{width: '300px', height: '200px', objectFit: 'cover'}}
                             />
                             <h3>{video.title}</h3>
+                        </Link>
+                        <Link to={`/channel/${video.creator._id || video.creator}`} style={{textDecoration: 'none', color: '#606060'}}>
                             <p>{video.creator?.channelName || 'Unknown'}</p>
-                            <p>{video.views} views</p>
-                        </div>
-                    </Link>
+                        </Link>
+                        <p>{video.views || 0} views</p>
+                    </div>
                 ))   
                 )}
+                </div>
             </div>
         </div>
     );
