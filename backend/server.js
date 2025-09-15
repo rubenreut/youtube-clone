@@ -1,15 +1,14 @@
 console.log('Script is starting...');
 
-const express = require("express");
+require('dotenv').config();
 
+const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const authRoutes = require('./routes/auth');
 const videoRoutes = require('./routes/videos');
 const commentRoutes = require('./routes/comments');
 const userRoutes = require('./routes/users');
-
-require('dotenv').config();
 
 console.log('Creating Express app...');
 const app = express();

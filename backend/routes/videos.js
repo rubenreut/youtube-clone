@@ -22,6 +22,9 @@ const upload = multer({
         s3: s3,
         bucket: process.env.AWS_BUCKET_NAME,
         acl: 'public-read',
+        metadata: function (req, file, cb) {
+            cb(null, {fieldName: file.fieldname});
+        },
         key: function (req, file, cb) {
             const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9);
             cb(null, 'videos/' + uniqueName + path.extname(file.originalname));
@@ -48,8 +51,20 @@ router.get('/', async (req, res) => {
 
 //POST upload video 
 
-router.post('/upload',verifyToken, upload.single('video'), async (req, res) => {
+router.post('/upload', verifyToken, (req, res, next) => {
+    upload.single('video')(req, res, function(err) {
+        if (err) {
+            console.error('Multer error:', err);
+            return res.status(500).json({ error: err.message });
+        }
+        next();
+    });
+}, async (req, res) => {
     try {
+        console.log('Upload request received');
+        console.log('File:', req.file);
+        console.log('Body:', req.body);
+        
         if(!req.file) {
             return res.status(400).json({error: 'No video file provided'});
         }
