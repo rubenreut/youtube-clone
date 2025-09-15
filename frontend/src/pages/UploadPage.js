@@ -43,7 +43,7 @@ function UploadPage(){
         try{
             const token = localStorage.getItem('token');
 
-            const response = await axios.post('${API_URL}/api/videos/upload', formData, {
+            const response = await axios.post(`${API_URL}/api/videos/upload`, formData, {
                 headers: {
                     'auth-token': token
                 },
