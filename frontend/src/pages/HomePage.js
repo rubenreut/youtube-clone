@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import {AiFillHome} from 'react-icons/ai';
 import {MdOutlineSubscriptions, MdOutlineVideoLibrary, MdHistory} from 'react-icons/md';
+import API_URL from '../config';
 
 function HomePage(){
     const[videos, setVideos ] = useState([]);
@@ -15,7 +16,7 @@ function HomePage(){
 
     const fetchVideos = async () => {
         try{
-            const response = await axios.get('http://localhost:3099/api/videos');
+            const response = await axios.get(`${API_URL}/api/videos`);
             setVideos(response.data);
             setLoading(false);
 
@@ -58,7 +59,7 @@ function HomePage(){
                     <div key={video._id} className="video-card">
                         <Link to={`/video/${video._id}`} style={{textDecoration: 'none', color: 'inherit'}}>
                             <img
-                                src={video.thumbnailURL ? `http://localhost:3099${video.thumbnailURL}` : 'https://via.placeholder.com/300x200'}
+                                src={video.thumbnailURL ? `${API_URL}${video.thumbnailURL}` : 'https://via.placeholder.com/300x200'}
                                 alt={video.title}
                             />
                         </Link>

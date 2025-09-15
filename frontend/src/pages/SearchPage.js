@@ -1,3 +1,4 @@
+import API_URL from '../config';
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import axios from 'axios';
@@ -16,7 +17,7 @@ function SearchPage() {
 
     const searchVideos = async () => {
         try {
-            const response = await axios.get(`http://localhost:3099/api/videos/search?q=${query}`);
+            const response = await axios.get(`${API_URL}/api/videos/search?q=${query}`);
             setVideos(response.data);
             setLoading(false);
         } catch(error) {
@@ -39,7 +40,7 @@ function SearchPage() {
                     videos.map(video => (
                         <Link key={video._id} to={`/video/${video._id}`} className="search-result">
                             <img 
-                                src={video.thumbnailURL ? `http://localhost:3099${video.thumbnailURL}` : 'https://via.placeholder.com/200x120'}
+                                src={video.thumbnailURL ? `${API_URL}${video.thumbnailURL}` : 'https://via.placeholder.com/200x120'}
                                 alt={video.title}
                                 style={{width: '200px', height: '120px', objectFit: 'cover'}}
                             />

@@ -1,3 +1,4 @@
+import API_URL from '../config';
 import {useState , useEffect} from 'react';
 import {useParams, Link, useNavigate} from 'react-router-dom';
 import axios from 'axios';
@@ -23,7 +24,7 @@ function ChannelPage() {
 
     const fetchChannelData = async () => {
         try{
-            const response = await axios.get(`http://localhost:3099/api/users/channels/${userId}`);
+            const response = await axios.get(`${API_URL}/api/users/channels/${userId}`);
             setChannel(response.data.user);
             setVideos(response.data.videos);
             setLoading(false);
@@ -56,7 +57,7 @@ function ChannelPage() {
         if(token){
             try{
                 const response = await axios.post(
-                    `http://localhost:3099/api/users/${userId}/subscribe`,
+                    `${API_URL}/api/users/${userId}/subscribe`,
                     {},
                     {headers: {'auth-token': token}}
                 );
@@ -75,7 +76,7 @@ function ChannelPage() {
         const token = localStorage.getItem('token');
         try{
             const response = await axios.put(
-                `http://localhost:3099/api/users/${userId}/update`,
+                `${API_URL}/api/users/${userId}/update`,
                 {
                     channelName: editedChannelName,
                     channelDescription: editedDescription
@@ -98,7 +99,7 @@ function ChannelPage() {
 
         try{
             const token= localStorage.getItem('token');
-            await axios.delete(`http://localhost:3099/api/videos/${videoId}`, {headers: {'auth-token': token}});
+            await axios.delete(`${API_URL}/api/videos/${videoId}`, {headers: {'auth-token': token}});
 
             //remove video from state
             setVideos(videos.filter(v => v._id !== videoId));
@@ -166,7 +167,7 @@ function ChannelPage() {
                     {videos.map(video => (
                         <div key = {video._id} className="channel-video-card">
                             <Link to={`/video/${video._id}`}>
-                                <img src={`http://localhost:3099${video.thumbnailURL}`} alt = {video.title} />
+                                <img src={`${API_URL}${video.thumbnailURL}`} alt = {video.title} />
                                 <h3>{video.title}</h3>
                                 <p>{video.views} views</p>
                             </Link>

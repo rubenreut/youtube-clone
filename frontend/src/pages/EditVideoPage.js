@@ -1,3 +1,4 @@
+import API_URL from '../config';
 import {useState, useEffect} from 'react';
 import {useParams, useNavigate} from 'react-router-dom';
 import axios from 'axios';
@@ -17,7 +18,7 @@ function EditVideoPage(){
 
     const fetchVideoData = async () => {
         try{
-            const response = await axios.get(`http://localhost:3099/api/videos/${videoId}`);
+            const response = await axios.get(`${API_URL}/api/videos/${videoId}`);
             setTitle(response.data.title);
             setDescription(response.data.description || '');
             setCategory(response.data.category || '');
@@ -34,7 +35,7 @@ function EditVideoPage(){
         const token = localStorage.getItem('token');
 
         try{
-            await axios.put(`http://localhost:3099/api/videos/${videoId}`,
+            await axios.put(`${API_URL}/api/videos/${videoId}`,
                 {
                     title,
                     description,

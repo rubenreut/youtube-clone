@@ -1,3 +1,4 @@
+import API_URL from '../config';
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -42,7 +43,7 @@ function UploadPage(){
         try{
             const token = localStorage.getItem('token');
 
-            const response = await axios.post('http://localhost:3099/api/videos/upload', formData, {
+            const response = await axios.post('${API_URL}/api/videos/upload', formData, {
                 headers: {
                     'auth-token': token
                 },

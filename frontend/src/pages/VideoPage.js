@@ -1,3 +1,4 @@
+import API_URL from '../config';
 import { useState, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -20,7 +21,7 @@ function VideoPage(){
 
     const fetchVideo = async() => {
         try{
-            const response = await axios.get(`http://localhost:3099/api/videos/${id}`);
+            const response = await axios.get(`${API_URL}/api/videos/${id}`);
             setVideo(response.data);
             setLoading(false);
 
@@ -33,7 +34,7 @@ function VideoPage(){
 
     const fetchComments = async () => {
         try{
-            const response = await axios.get(`http://localhost:3099/api/comments/video/${id}`);
+            const response = await axios.get(`${API_URL}/api/comments/video/${id}`);
             setComments(response.data);
             setLoading(false);
         }
@@ -50,7 +51,7 @@ function VideoPage(){
                 return;
             }
             
-            const response = await axios.post(`http://localhost:3099/api/videos/${id}/like`, {}, {
+            const response = await axios.post(`${API_URL}/api/videos/${id}/like`, {}, {
                 headers: {'auth-token': token}
             });
 
@@ -84,7 +85,7 @@ function VideoPage(){
                 return;
             }
             
-            const response = await axios.post(`http://localhost:3099/api/videos/${id}/dislike`, {}, {
+            const response = await axios.post(`${API_URL}/api/videos/${id}/dislike`, {}, {
                 headers: { 'auth-token': token}
             });
             
@@ -114,7 +115,7 @@ function VideoPage(){
         e.preventDefault();
         try{
             const token = localStorage.getItem('token');
-            await axios.post(`http://localhost:3099/api/comments`, {
+            await axios.post(`${API_URL}/api/comments`, {
                 video: id,
                 text: newComment
             }, {
@@ -139,7 +140,7 @@ function VideoPage(){
                     <video
                         width="100%"
                         controls
-                        src={`http://localhost:3099${video.videoURL}`}
+                        src={`${API_URL}${video.videoURL}`}
                     />
 
                     <div className="video-info">

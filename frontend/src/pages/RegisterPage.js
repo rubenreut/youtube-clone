@@ -1,3 +1,4 @@
+import API_URL from '../config';
 import {useState} from 'react';
 import axios from 'axios';
 import {useNavigate } from 'react-router-dom';
@@ -19,7 +20,7 @@ function RegisterPage(){
         //api call to attempt registration
         try{
             //send post request to backend route
-            const response = await axios.post('http://localhost:3099/api/auth/register', {
+            const response = await axios.post('${API_URL}/api/auth/register', {
                 username,
                 email,
                 password,
