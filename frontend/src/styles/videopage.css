@@ -42,7 +42,7 @@
   }
   
   .video-main {
-    max-width: 90%;
+    max-width: 100%;
   }
   
   .video-main video {
@@ -68,7 +68,7 @@
 .video-main video {
   width: 100%;
   height: auto;
-  max-height: 520px;
+  max-height: 420px;
   background-color: #000;
   border-radius: 12px;
 }
