@@ -1,6 +1,6 @@
 import API_URL from '../config';
 import { useState, useEffect} from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 
 function VideoPage(){
@@ -151,9 +151,8 @@ function VideoPage(){
                                     {video.creator?.profilePicture ? (
                                         <img src={video.creator.profilePicture} alt={video.creator.channelName}/>
                                     ) : (
-                                        <div className="channel-details">
-                                            <h3>{video.creator?.channelName || 'Unknown channel'}</h3>
-                                            <p>{video.creator?.subscribers || 0} subscribers</p>
+                                        <div className="avatar-placeholder">
+                                            {video.creator?.channelName?.charAt(0).toUpperCase() || 'C'}
                                         </div>
                                     )}
                                 </div>
