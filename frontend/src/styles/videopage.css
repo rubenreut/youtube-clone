@@ -312,3 +312,11 @@
   color: #0f0f0f;
   margin: 0;
 }
+
+.channel-info-card{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  margin: 12px 0;
+}
