@@ -79,36 +79,42 @@
 .video-grid {
   display: grid;
   gap: 16px;
-  padding: 20px 45px 0 45px; /* Base padding of 45px */
-  margin: 0 auto; /* Center the grid */
-  max-width: calc(777px * 3 + 32px); /* Max width: 3 videos * 777px + 2 gaps * 16px */
-  
-  /* Default: 3 columns */
-  grid-template-columns: repeat(3, minmax(0, 777px)); /* Each column max 777px */
-  justify-content: center; /* Center the grid if there's extra space */
+  padding: 20px;
+  margin: 0 auto;
+  max-width: 2256px; /* Reasonable max width */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
 
-/* Smaller screens (less than 2400px): Allow videos to be smaller */
-@media (max-width: 2400px) {
+/* Large screens (4+ columns) */
+@media (min-width: 1400px) {
   .video-grid {
-    grid-template-columns: repeat(3, 1fr); 
-    max-width: 100%; 
+    padding: 20px 40px;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   }
 }
 
-/* Tablet (less than 1000px): 2 columns */
-@media (max-width: 1000px) {
+/* Desktop (3 columns) */
+@media (max-width: 1200px) {
+  .video-grid {
+    grid-template-columns: repeat(3, 1fr);
+    padding: 20px 30px;
+  }
+}
+
+/* Tablet (2 columns) */
+@media (max-width: 900px) {
   .video-grid {
     grid-template-columns: repeat(2, 1fr);
-    padding: 20px 45px 0 45px; /* Keep 45px padding */
+    padding: 20px;
   }
 }
 
-/* Mobile (less than 600px): 1 column */
+/* Mobile (1 column) */
 @media (max-width: 600px) {
   .video-grid {
     grid-template-columns: 1fr;
-    padding: 20px 20px 0 20px; /* Minimal padding for mobile */
+    padding: 15px;
+    gap: 20px;
   }
 }
 

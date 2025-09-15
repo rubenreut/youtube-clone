@@ -11,6 +11,16 @@
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
+/* Mobile */
+@media (max-width: 480px) {
+  .login-page,
+  .register-page {
+    margin: 20px;
+    padding: 20px;
+    max-width: none;
+  }
+}
+
 /* Login/register headings */
 .login-page h2,
 .register-page h2 {

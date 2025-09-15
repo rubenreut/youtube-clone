@@ -6,6 +6,31 @@
   padding: 20px;
 }
 
+/* Mobile */
+@media (max-width: 768px) {
+  .channel-page {
+    padding: 10px;
+  }
+  
+  .channel-header {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .channel-header h1 {
+    font-size: 24px;
+  }
+  
+  .channel-videos .video-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+  }
+  
+  .channel-video-card img {
+    height: 100px;
+  }
+}
+
 /* Channel header section */
 .channel-header {
   background: white;

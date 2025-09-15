@@ -121,3 +121,59 @@
   background-color: #cc0000;
   box-shadow: 0 1px 4px rgba(0,0,0,0.2);
 }
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 8px;
+  }
+
+  .navbar .logo h2 {
+    font-size: 18px;
+  }
+
+  .search-form {
+    flex: 1;
+    max-width: none;
+    margin: 0 8px;
+  }
+
+  .search-form input {
+    font-size: 14px;
+    height: 36px;
+  }
+
+  .search-form button {
+    width: 50px;
+    height: 36px;
+  }
+
+  .nav-links {
+    gap: 4px;
+  }
+
+  .nav-links a {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .nav-links button {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .navbar .logo {
+    margin-right: 8px;
+  }
+
+  .nav-links a:not(:last-child) {
+    display: none; /* Hide some links on very small screens */
+  }
+
+  .search-form {
+    min-width: 0;
+  }
+}

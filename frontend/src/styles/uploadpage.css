@@ -9,6 +9,15 @@
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
+/* Mobile */
+@media (max-width: 640px) {
+  .upload-page {
+    margin: 20px;
+    padding: 15px;
+    max-width: none;
+  }
+}
+
 body.dark-mode .upload-page {
   background-color: #1f1f1f;
   box-shadow: 0 1px 3px rgba(255,255,255,0.1);

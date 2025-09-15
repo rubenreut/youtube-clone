@@ -23,6 +23,47 @@
   width: 400px;
 }
 
+/* Tablet */
+@media (max-width: 1200px) {
+  .video-container {
+    flex-direction: column;
+  }
+  
+  .video-sidebar {
+    width: 100%;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .video-container {
+    padding: 0;
+    gap: 0;
+  }
+  
+  .video-main {
+    max-width: 100%;
+  }
+  
+  .video-main video {
+    border-radius: 0;
+  }
+  
+  .video-info {
+    border-radius: 0;
+    margin-top: 0;
+  }
+  
+  .video-info h1 {
+    font-size: 16px;
+  }
+  
+  .comments-section {
+    border-radius: 0;
+    margin-top: 12px;
+  }
+}
+
 /* Video player */
 .video-main video {
   width: 100%;
