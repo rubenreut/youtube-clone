@@ -21,14 +21,15 @@ const upload = multer({
     storage: multerS3({
         s3: s3,
         bucket: process.env.AWS_BUCKET_NAME,
-        acl: 'public-read',
+        // Remove ACL since bucket might not have ACLs enabled
         metadata: function (req, file, cb) {
             cb(null, {fieldName: file.fieldname});
         },
         key: function (req, file, cb) {
             const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9);
             cb(null, 'videos/' + uniqueName + path.extname(file.originalname));
-        }
+        },
+        contentType: multerS3.AUTO_CONTENT_TYPE
     }),
     limits: {
         fileSize: 100 * 1024 * 1024 // 100MB limit
