@@ -140,7 +140,7 @@ function VideoPage(){
                     <video
                         width="100%"
                         controls
-                        src={`${API_URL}${video.videoURL}`}
+                        src={video.videoURL.startsWith('http') ? video.videoURL : `${API_URL}${video.videoURL}`}
                     />
 
                     <div className="video-info">

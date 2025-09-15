@@ -59,7 +59,7 @@ function HomePage(){
                     <div key={video._id} className="video-card">
                         <Link to={`/video/${video._id}`} style={{textDecoration: 'none', color: 'inherit'}}>
                             <img
-                                src={video.thumbnailURL ? `${API_URL}${video.thumbnailURL}` : 'https://via.placeholder.com/300x200'}
+                                src={video.thumbnailURL?.startsWith('http') ? video.thumbnailURL : (video.thumbnailURL ? `${API_URL}${video.thumbnailURL}` : 'https://via.placeholder.com/300x200')}
                                 alt={video.title}
                             />
                         </Link>

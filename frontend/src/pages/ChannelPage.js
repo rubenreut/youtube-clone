@@ -167,7 +167,7 @@ function ChannelPage() {
                     {videos.map(video => (
                         <div key = {video._id} className="channel-video-card">
                             <Link to={`/video/${video._id}`}>
-                                <img src={`${API_URL}${video.thumbnailURL}`} alt = {video.title} />
+                                <img src={video.thumbnailURL?.startsWith('http') ? video.thumbnailURL : `${API_URL}${video.thumbnailURL}`} alt = {video.title} />
                                 <h3>{video.title}</h3>
                                 <p>{video.views} views</p>
                             </Link>

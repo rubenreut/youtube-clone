@@ -1,27 +1,34 @@
 const router = require('express').Router();
 const multer = require('multer');
+const multerS3 = require('multer-s3');
+const AWS = require('aws-sdk');
 const path = require('path');
 const ffmpeg = require('fluent-ffmpeg');
 const Video = require('../models/Video');
 const verifyToken = require('../middleware/auth');
 
-//where it will store the video 
-
-const storage = multer.diskStorage ({
-    destination: (req, file, cb) => {
-        cb(null,'uploads/videos/');
-    },
-
-    filename: (req, file, cb) => {
-        const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9); //original file name gets replaced with date and random number for security
-        cb(null, uniqueName + path.extname(file.originalname)); //gets file extension
-    }
+// Configure AWS
+AWS.config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: process.env.AWS_REGION
 });
 
-const upload = multer ({
-    storage: storage,
+const s3 = new AWS.S3();
+
+// Configure multer for S3
+const upload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: process.env.AWS_BUCKET_NAME,
+        acl: 'public-read',
+        key: function (req, file, cb) {
+            const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9);
+            cb(null, 'videos/' + uniqueName + path.extname(file.originalname));
+        }
+    }),
     limits: {
-        fileSize: 100 * 1024 * 1024
+        fileSize: 100 * 1024 * 1024 // 100MB limit
     }
 });
 
@@ -48,41 +55,20 @@ router.post('/upload',verifyToken, upload.single('video'), async (req, res) => {
         }
 
         
-        // Generate unique thumbnail filename
-        const videoPath = path.join('uploads/videos', req.file.filename);
-        const thumbnailFilename = `thumb-${Date.now()}-${Math.round(Math.random() * 1E9)}.jpg`;
-        const thumbnailPath = 'uploads/thumbnails';
-
-        // Create video document with temporary thumbnail URL
+        // For now, we'll skip thumbnail generation with ffmpeg since it requires the video file locally
+        // You can implement thumbnail generation later using AWS Lambda or a separate service
+        
+        // Create video document with S3 URL
         const newVideo = new Video({
             title: req.body.title,
             description: req.body.description,
-            videoURL: `/uploads/videos/${req.file.filename}`,
-            thumbnailURL: `/uploads/thumbnails/${thumbnailFilename}`, // Will be generated
+            videoURL: req.file.location, // S3 URL from multer-s3
+            thumbnailURL: 'https://via.placeholder.com/320x180', // Placeholder for now
             creator: req.userID,
             duration: 0
         });
 
-        // Generate thumbnail from video
-        ffmpeg(videoPath)
-            .on('end', async () => {
-                console.log('Thumbnail generated successfully!');
-                // Thumbnail is now saved, video document already has the correct path
-            })
-            .on('error', async (err) => {
-                console.error('Error generating thumbnail:', err);
-                // If thumbnail generation fails, update to use placeholder
-                newVideo.thumbnailURL = 'https://via.placeholder.com/320x180';
-                await newVideo.save();
-            })
-            .screenshots({
-                timestamps: ['00:00:01.000'], // Take screenshot at 1 second
-                filename: thumbnailFilename,
-                folder: thumbnailPath,
-                size: '320x180' // 16:9 aspect ratio for thumbnails
-            });
-
-        // Save video document immediately (thumbnail generates in background)
+        // Save video document
         await newVideo.save();
         res.json({message: 'Video Uploaded!', video: newVideo});
         

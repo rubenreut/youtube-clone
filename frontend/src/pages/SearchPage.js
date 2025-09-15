@@ -40,7 +40,7 @@ function SearchPage() {
                     videos.map(video => (
                         <Link key={video._id} to={`/video/${video._id}`} className="search-result">
                             <img 
-                                src={video.thumbnailURL ? `${API_URL}${video.thumbnailURL}` : 'https://via.placeholder.com/200x120'}
+                                src={video.thumbnailURL?.startsWith('http') ? video.thumbnailURL : (video.thumbnailURL ? `${API_URL}${video.thumbnailURL}` : 'https://via.placeholder.com/200x120')}
                                 alt={video.title}
                                 style={{width: '200px', height: '120px', objectFit: 'cover'}}
                             />

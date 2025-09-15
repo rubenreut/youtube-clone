@@ -9,8 +9,17 @@
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
+body.dark-mode .upload-page {
+  background-color: #1f1f1f;
+  box-shadow: 0 1px 3px rgba(255,255,255,0.1);
+}
+
 .upload-page h2 {
   margin-bottom: 20px;
+}
+
+body.dark-mode .upload-page h2 {
+  color: #f1f1f1;
 }
 
 .upload-page form > div {
@@ -26,9 +35,21 @@
   font-size: 14px;
 }
 
+body.dark-mode .upload-page input[type="text"],
+body.dark-mode .upload-page textarea,
+body.dark-mode .upload-page input[type="file"] {
+  background-color: #121212;
+  color: #f1f1f1;
+  border: 1px solid #3f3f3f;
+}
+
 .upload-page textarea {
   resize: vertical;
   min-height: 100px;
+}
+
+body.dark-mode .upload-page p {
+  color: #aaa;
 }
 
 .upload-page button {
