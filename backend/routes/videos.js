@@ -239,6 +239,33 @@ router.post('/:id/dislike', verifyToken, async (req, res) => {
         }
     });
 
+// UPDATE/EDIT a video
+router.put('/:id', verifyToken, async (req, res) => {
+    try {
+        const video = await Video.findById(req.params.id);
+        
+        if (!video) {
+            return res.status(404).json({ error: 'Video not found' });
+        }
+
+        // Check if user owns this video
+        if (video.creator.toString() !== req.userID) {
+            return res.status(403).json({ error: 'You can only edit your own videos' });
+        }
+
+        // Update fields
+        if (req.body.title) video.title = req.body.title;
+        if (req.body.description !== undefined) video.description = req.body.description;
+        if (req.body.category !== undefined) video.category = req.body.category;
+
+        await video.save();
+        
+        res.json({ message: 'Video updated successfully', video });
+    } catch(error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // DELETE a video
 router.delete('/:id', verifyToken, async (req, res) => {
     try {
