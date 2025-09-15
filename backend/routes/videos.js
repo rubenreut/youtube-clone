@@ -32,7 +32,7 @@ const upload = multer({
         contentType: multerS3.AUTO_CONTENT_TYPE
     }),
     limits: {
-        fileSize: 100 * 1024 * 1024 // 100MB limit
+        fileSize: 250 * 1024 * 1024 // 250MB limit
     }
 });
 
