@@ -33,9 +33,9 @@ function UploadPage(){
         const context = canvas.getContext('2d');
 
         video.src = URL.createObjectURL(videoFile);
-        video.currentTime = 1; // Capture at 1 second
+        video.preload = 'metadata';
 
-        video.onloadeddata = () => {
+        video.onseeked = () => {
             canvas.width = 320;
             canvas.height = 180;
             context.drawImage(video, 0, 0, 320, 180);
@@ -43,7 +43,12 @@ function UploadPage(){
             canvas.toBlob((blob) => {
                 setThumbnail(blob);
                 setThumbnailPreview(URL.createObjectURL(blob));
+                console.log('Thumbnail generated!');
             }, 'image/jpeg', 0.7);
+        };
+
+        video.onloadedmetadata = () => {
+            video.currentTime = Math.min(1, video.duration / 2); // Capture at 1 second or halfway
         };
     };
 
