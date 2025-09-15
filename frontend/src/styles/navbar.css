@@ -130,36 +130,31 @@
 
   .navbar .logo h2 {
     font-size: 18px;
+    min-width: 30px;
   }
 
   .search-form {
-    flex: 1;
-    max-width: none;
-    margin: 0 8px;
-  }
-
-  .search-form input {
-    font-size: 14px;
-    height: 36px;
-  }
-
-  .search-form button {
-    width: 50px;
-    height: 36px;
+    display: none; /* Hide search on mobile */
   }
 
   .nav-links {
-    gap: 4px;
+    gap: 2px;
+    flex-wrap: nowrap;
   }
 
   .nav-links a {
-    padding: 6px 10px;
+    padding: 6px 8px;
     font-size: 12px;
   }
 
   .nav-links button {
-    padding: 6px 10px;
+    padding: 6px 8px;
     font-size: 12px;
+  }
+  
+  /* Hide "Home" text on mobile since there's a logo */
+  .nav-links a:first-child {
+    display: none;
   }
 }
 
@@ -169,11 +164,17 @@
     margin-right: 8px;
   }
 
-  .nav-links a:not(:last-child) {
-    display: none; /* Hide some links on very small screens */
+  .navbar .logo h2 {
+    font-size: 16px;
   }
 
-  .search-form {
-    min-width: 0;
+  .nav-links a {
+    padding: 5px 6px;
+    font-size: 11px;
+  }
+
+  .nav-links button {
+    padding: 5px 6px;
+    font-size: 11px;
   }
 }

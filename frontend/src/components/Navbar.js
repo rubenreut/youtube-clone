@@ -36,7 +36,7 @@ function Navbar() {
     return (
         <nav className="navbar">
             <Link to="/" className="logo">
-                <h2>YouTube Clone</h2>
+                <h2>YT</h2>
             </Link>
 
             <form onSubmit={handleSearch} className="search-form">

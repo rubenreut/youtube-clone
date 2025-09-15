@@ -35,14 +35,14 @@
 }
 
 /* Mobile */
-@media (max-width: 768px) {
+@media (max-width: 468px) {
   .video-container {
     padding: 0;
     gap: 0;
   }
   
   .video-main {
-    max-width: 100%;
+    max-width: 90%;
   }
   
   .video-main video {
@@ -68,7 +68,7 @@
 .video-main video {
   width: 100%;
   height: auto;
-  max-height: 720px;
+  max-height: 520px;
   background-color: #000;
   border-radius: 12px;
 }

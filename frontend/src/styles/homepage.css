@@ -79,25 +79,34 @@
 .video-grid {
   display: grid;
   gap: 16px;
-  padding: 20px;
+  padding: 20px 275px;
   margin: 0 auto;
-  max-width: 2256px; /* Reasonable max width */
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  justify-content: center;
+  grid-template-columns: repeat(3, minmax(0, 777px));
 }
 
-/* Large screens (4+ columns) */
-@media (min-width: 1400px) {
+/* Large screens - max 3 columns of 777px each */
+@media (min-width: 2400px) {
   .video-grid {
-    padding: 20px 40px;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    padding: 20px 275px;
+    max-width: calc(777px * 3 + 32px);
+    margin: 0 auto;
   }
 }
 
-/* Desktop (3 columns) */
-@media (max-width: 1200px) {
+/* Desktop (3 columns flexible) */
+@media (max-width: 2000px) {
   .video-grid {
     grid-template-columns: repeat(3, 1fr);
-    padding: 20px 30px;
+    padding: 20px 100px;
+  }
+}
+
+/* Smaller desktop */
+@media (max-width: 1400px) {
+  .video-grid {
+    grid-template-columns: repeat(3, 1fr);
+    padding: 20px 40px;
   }
 }
 

@@ -10,8 +10,6 @@ function UploadPage(){
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState('');
     const [uploadProgress, setUploadProgress] = useState(0);
-    const [thumbnail, setThumbnail] = useState(null);
-    const [thumbnailPreview, setThumbnailPreview] = useState(null);
     const navigate = useNavigate();
 
     const handleFileSelect = (e) => {
@@ -19,63 +17,11 @@ function UploadPage(){
 
         if(file && file.type.startsWith('video/')) {
             setVideoFile(file);
-            generateThumbnail(file);
         }
         else{
             setError('Please select a video file');
             setVideoFile(null);
         }
-    };
-
-    const generateThumbnail = (videoFile) => {
-        const video = document.createElement('video');
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-
-        video.src = URL.createObjectURL(videoFile);
-        video.preload = 'metadata';
-
-        video.onseeked = () => {
-            // Always 16:9 canvas
-            canvas.width = 320;
-            canvas.height = 180;
-            
-            // Fill with black background
-            context.fillStyle = '#000000';
-            context.fillRect(0, 0, 320, 180);
-            
-            // Calculate aspect ratio and positioning
-            const videoAspect = video.videoWidth / video.videoHeight;
-            const canvasAspect = 320 / 180;
-            
-            let drawWidth, drawHeight, offsetX, offsetY;
-            
-            if (videoAspect > canvasAspect) {
-                // Video is wider - fit by width
-                drawWidth = 320;
-                drawHeight = 320 / videoAspect;
-                offsetX = 0;
-                offsetY = (180 - drawHeight) / 2;
-            } else {
-                // Video is taller - fit by height with black bars on sides
-                drawHeight = 180;
-                drawWidth = 180 * videoAspect;
-                offsetX = (320 - drawWidth) / 2;
-                offsetY = 0;
-            }
-            
-            context.drawImage(video, offsetX, offsetY, drawWidth, drawHeight);
-            
-            canvas.toBlob((blob) => {
-                setThumbnail(blob);
-                setThumbnailPreview(URL.createObjectURL(blob));
-                console.log('Thumbnail generated!');
-            }, 'image/jpeg', 0.7);
-        };
-
-        video.onloadedmetadata = () => {
-            video.currentTime = Math.min(1, video.duration / 2); // Capture at 1 second or halfway
-        };
     };
 
     const handleUpload = async (e) => {
@@ -90,9 +36,6 @@ function UploadPage(){
         formData.append('video', videoFile);
         formData.append('title', title);
         formData.append('description', description);
-        if(thumbnail) {
-            formData.append('thumbnail', thumbnail, 'thumbnail.jpg');
-        }
 
         setUploading(true);
         setError('');
@@ -136,13 +79,6 @@ function UploadPage(){
                     />
                     {videoFile && <p>Selected: {videoFile.name}</p>}
                 </div>
-
-                {thumbnailPreview && (
-                    <div>
-                        <label>Thumbnail Preview:</label>
-                        <img src={thumbnailPreview} alt="Thumbnail" style={{width: '200px', display: 'block', marginTop: '10px'}} />
-                    </div>
-                )}
 
                 <div>
                     <input
