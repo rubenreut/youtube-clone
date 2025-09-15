@@ -35,7 +35,8 @@
 .search-form {
   display: flex;
   flex: 0 1 640px;
-  margin: 0 40px;
+  margin: 0 auto;
+  max-width: 640px;
 }
 
 /* Search input field */

@@ -1,6 +1,8 @@
 import {useState, useEffect} from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import {AiFillHome} from 'react-icons/ai';
+import {MdOutlineSubscriptions, MdOutlineVideoLibrary, MdHistory} from 'react-icons/md';
 
 function HomePage(){
     const[videos, setVideos ] = useState([]);
@@ -31,24 +33,20 @@ function HomePage(){
         <div className="HomePage">
             <div className="sidebar">
                 <Link to="/" className="sidebar-item active">
-                    <span>🏠</span>
+                    <AiFillHome size={20} />
                     <span>Home</span>
                 </Link>
-                <Link to="/trending" className="sidebar-item">
-                    <span>🔥</span>
-                    <span>Trending</span>
-                </Link>
                 <Link to="/subscriptions" className="sidebar-item">
-                    <span>📺</span>
+                    <MdOutlineSubscriptions size={20} />
                     <span>Subscriptions</span>
                 </Link>
                 <hr />
                 <Link to="/library" className="sidebar-item">
-                    <span>📚</span>
+                    <MdOutlineVideoLibrary size={20} />
                     <span>Library</span>
                 </Link>
                 <Link to="/history" className="sidebar-item">
-                    <span>📜</span>
+                    <MdHistory size={20} />
                     <span>History</span>
                 </Link>
             </div>
@@ -63,12 +61,24 @@ function HomePage(){
                                 src={video.thumbnailURL ? `http://localhost:3099${video.thumbnailURL}` : 'https://via.placeholder.com/300x200'}
                                 alt={video.title}
                             />
-                            <h3>{video.title}</h3>
                         </Link>
-                        <Link to={`/channel/${video.creator._id || video.creator}`} style={{textDecoration: 'none', color: '#606060'}}>
-                            <p>{video.creator?.channelName || 'Unknown'}</p>
-                        </Link>
-                        <p>{video.views || 0} views</p>
+                        
+                        <div className="video-info-container">
+                            <div className="channel-avatar">
+                                <div className="avatar-circle">
+                                    {video.creator?.channelName?.charAt(0).toUpperCase() || 'U'}
+                                </div>
+                            </div>
+                            <div className="video-details">
+                                <Link to={`/video/${video._id}`} style={{textDecoration: 'none', color: 'inherit'}}>
+                                    <h3>{video.title}</h3>
+                                </Link>
+                                <Link to={`/channel/${video.creator._id || video.creator}`} style={{textDecoration: 'none', color: '#606060'}}>
+                                    <p>{video.creator?.channelName || 'Unknown'}</p>
+                                </Link>
+                                <p>{video.views || 0} views</p>
+                            </div>
+                        </div>
                     </div>
                 ))   
                 )}

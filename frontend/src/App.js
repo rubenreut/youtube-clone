@@ -9,6 +9,8 @@ import VideoPage from './pages/VideoPage';
 import SearchPage from './pages/SearchPage';
 import ChannelPage from './pages/ChannelPage';
 import EditVideoPage from './pages/EditVideoPage';
+import {ThemeProvider} from './context/ThemeContext';
+
 
 function Layout({ children }) {
   const location = useLocation();
@@ -25,23 +27,26 @@ function Layout({ children }) {
 
 function App(){
   return(
-    <Router>
-      <div className="App">
-        <Layout>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/upload" element={<UploadPage />} />
-            <Route path="/video/:id" element={<VideoPage />} />
-            <Route path="/channel/:userId" element={<ChannelPage />} />
-            <Route path="/search" element={<SearchPage />} />
-            <Route path ="/edit-video/:videoId" element ={<EditVideoPage/>}/>
-    
-          </Routes>
-        </Layout>
-      </div>
-    </Router>
+
+    <ThemeProvider>
+      <Router>
+        <div className="App">
+          <Layout>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/upload" element={<UploadPage />} />
+              <Route path="/video/:id" element={<VideoPage />} />
+              <Route path="/channel/:userId" element={<ChannelPage />} />
+              <Route path="/search" element={<SearchPage />} />
+              <Route path ="/edit-video/:videoId" element ={<EditVideoPage/>}/>
+      
+            </Routes>
+          </Layout>
+        </div>
+      </Router>
+    </ThemeProvider>
   );
 }
 

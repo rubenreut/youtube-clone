@@ -79,23 +79,20 @@
 .video-grid {
   display: grid;
   gap: 16px;
-  padding: 20px 275px 0 275px;
+  padding: 20px 45px 0 45px; /* Base padding of 45px */
+  margin: 0 auto; /* Center the grid */
+  max-width: calc(777px * 3 + 32px); /* Max width: 3 videos * 777px + 2 gaps * 16px */
   
-  /* Default: 4 columns for large screens */
-  grid-template-columns: repeat(4, 1fr);
+  /* Default: 3 columns */
+  grid-template-columns: repeat(3, minmax(0, 777px)); /* Each column max 777px */
+  justify-content: center; /* Center the grid if there's extra space */
 }
 
-/* Large desktop (less than 1800px): Still 4 columns but adjust */
-@media (max-width: 1800px) {
+/* Smaller screens (less than 2400px): Allow videos to be smaller */
+@media (max-width: 2400px) {
   .video-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-/* Medium desktop (less than 1400px): 3 columns */
-@media (max-width: 1400px) {
-  .video-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr); 
+    max-width: 100%; 
   }
 }
 
@@ -103,6 +100,7 @@
 @media (max-width: 1000px) {
   .video-grid {
     grid-template-columns: repeat(2, 1fr);
+    padding: 20px 45px 0 45px; /* Keep 45px padding */
   }
 }
 
@@ -110,36 +108,47 @@
 @media (max-width: 600px) {
   .video-grid {
     grid-template-columns: 1fr;
+    padding: 20px 20px 0 20px; /* Minimal padding for mobile */
   }
 }
 
 /* Individual video card links */
 .video-card {
+  border-radius: 12px;
   text-decoration: none;
   color: inherit;
   cursor: pointer;
   transition: transform 0.2s;
+  background-color: white;
+  overflow: hidden;
+  padding-bottom: 10px;
 }
 
 /* Video card hover effect */
 .video-card:hover {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
   transform: translateY(-5px);
 }
 
 /* Video thumbnail image */
 .video-card img {
   width: 100%;
-  height: 280px;
+  aspect-ratio: 16/9;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 12px;
 }
 
 /* Video title */
 .video-card h3 {
-  margin-top: 10px;
-  font-size: 16px;
-  line-height: 1.2;
-  color: #030303;
+  margin: 8px 0 4px 0;
+  font-size:14px;
+  font-weight:500;
+  line-height: 1.4;
+  color: #0f0f0f;
+  display: -webkit-box; /*display for truncated text*/
+  -webkit-line-clamp: 2; /*max 2 lines of text*/
+  -webkit-box-orient: vertical; /*sets text flow direction*/
+  overflow: hidden; /*hides text that goes over two lines*/
 }
 
 /* Video metadata */
@@ -147,4 +156,48 @@
   color: #606060;
   font-size: 14px;
   margin-top: 5px;
+}
+
+/* Video info container with avatar */
+.video-info-container {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 0 12px;
+}
+
+.channel-avatar {
+  flex-shrink: 0;
+}
+
+.avatar-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #e5e5e5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #606060;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.video-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.video-details h3 {
+  margin: 0 0 4px 0;
+}
+
+.video-details p {
+  margin: 2px 0;
+}
+
+/* Dark mode for avatar */
+body.dark-mode .avatar-circle {
+  background: #383838;
+  color: #aaaaaa;
 }

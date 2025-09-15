@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import {useTheme} from '../context/ThemeContext';
 
 function Navbar() {
     const [searchQuery, setSearchQuery] = useState('');
     const [userId, setUserId] = useState(null);
     const navigate = useNavigate();
     const token = localStorage.getItem('token');
+    const {isDarkMode, toggleDarkMode} = useTheme();
     
     // Decode token to get user ID when component mounts
     useEffect(() => {
@@ -62,6 +64,20 @@ function Navbar() {
                         <Link to="/register">Register</Link>
                     </>
                 )}
+
+                <button 
+                    onClick={toggleDarkMode}
+                    style={{
+                        background: 'transparent',
+                        border: ' 1px solid  #ccc',
+                        borderRadius: '20px',
+                        cursor: 'pointer'
+                    }}
+                >
+                    {/*conditional rendering: show sun if dark mode, show moon if light mode}*/}
+                     {isDarkMode ? '☀️' : '🌙'}
+                </button>
+                
             </div>
         </nav>
     );
