@@ -145,6 +145,24 @@ function VideoPage(){
 
                     <div className="video-info">
                         <h1>{video.title}</h1>
+                        <div className="channel-info-card">
+                            <Link to={`/channel/${video.creator._id}`} className="channel-info-link">
+                                <div className="channel-avatar-large">
+                                    {video.creator?.profilePicture ? (
+                                        <img src={video.creator.profilePicture} alt={video.creator.channelName}/>
+                                    ) : (
+                                        <div className="channel-details">
+                                            <h3>{video.creator?.channelName || 'Unknown channel'}</h3>
+                                            <p>{video.creator?.subscribers || 0} subscribers</p>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="channel-details">
+                                    <h3>{video.creator?.channelName || 'Unknown channel'}</h3>
+                                    <p>{video.creator?.subscribers || 0} subscribers</p>
+                                </div>
+                            </Link>
+                        </div>
                         <div className="video-stats">
                             <span>{video.views || 0} views • {new Date(video.uploadDate).toLocaleDateString()}</span>
                             <div className="video-actions">
