@@ -10,6 +10,8 @@ function UploadPage(){
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState('');
     const [uploadProgress, setUploadProgress] = useState(0);
+    const [thumbnail, setThumbnail] = useState(null);
+    const [thumbnailPreview, setThumbnailPreview] = useState(null);
     const navigate = useNavigate();
 
     const handleFileSelect = (e) => {
@@ -17,11 +19,32 @@ function UploadPage(){
 
         if(file && file.type.startsWith('video/')) {
             setVideoFile(file);
+            generateThumbnail(file);
         }
         else{
             setError('Please select a video file');
             setVideoFile(null);
         }
+    };
+
+    const generateThumbnail = (videoFile) => {
+        const video = document.createElement('video');
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+
+        video.src = URL.createObjectURL(videoFile);
+        video.currentTime = 1; // Capture at 1 second
+
+        video.onloadeddata = () => {
+            canvas.width = 320;
+            canvas.height = 180;
+            context.drawImage(video, 0, 0, 320, 180);
+            
+            canvas.toBlob((blob) => {
+                setThumbnail(blob);
+                setThumbnailPreview(URL.createObjectURL(blob));
+            }, 'image/jpeg', 0.7);
+        };
     };
 
     const handleUpload = async (e) => {
@@ -36,6 +59,9 @@ function UploadPage(){
         formData.append('video', videoFile);
         formData.append('title', title);
         formData.append('description', description);
+        if(thumbnail) {
+            formData.append('thumbnail', thumbnail, 'thumbnail.jpg');
+        }
 
         setUploading(true);
         setError('');
@@ -79,6 +105,13 @@ function UploadPage(){
                     />
                     {videoFile && <p>Selected: {videoFile.name}</p>}
                 </div>
+
+                {thumbnailPreview && (
+                    <div>
+                        <label>Thumbnail Preview:</label>
+                        <img src={thumbnailPreview} alt="Thumbnail" style={{width: '200px', display: 'block', marginTop: '10px'}} />
+                    </div>
+                )}
 
                 <div>
                     <input

@@ -27,7 +27,11 @@ const upload = multer({
         },
         key: function (req, file, cb) {
             const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9);
-            cb(null, 'videos/' + uniqueName + path.extname(file.originalname));
+            if(file.fieldname === 'thumbnail') {
+                cb(null, 'thumbnails/' + uniqueName + path.extname(file.originalname));
+            } else {
+                cb(null, 'videos/' + uniqueName + path.extname(file.originalname));
+            }
         },
         contentType: multerS3.AUTO_CONTENT_TYPE
     }),
@@ -53,7 +57,10 @@ router.get('/', async (req, res) => {
 //POST upload video 
 
 router.post('/upload', verifyToken, (req, res, next) => {
-    upload.single('video')(req, res, function(err) {
+    upload.fields([
+        { name: 'video', maxCount: 1 },
+        { name: 'thumbnail', maxCount: 1 }
+    ])(req, res, function(err) {
         if (err) {
             console.error('Multer error:', err);
             return res.status(500).json({ error: err.message });
@@ -63,23 +70,22 @@ router.post('/upload', verifyToken, (req, res, next) => {
 }, async (req, res) => {
     try {
         console.log('Upload request received');
-        console.log('File:', req.file);
+        console.log('Files:', req.files);
         console.log('Body:', req.body);
         
-        if(!req.file) {
+        if(!req.files || !req.files.video) {
             return res.status(400).json({error: 'No video file provided'});
         }
 
+        const videoFile = req.files.video[0];
+        const thumbnailFile = req.files.thumbnail ? req.files.thumbnail[0] : null;
         
-        // For now, we'll skip thumbnail generation with ffmpeg since it requires the video file locally
-        // You can implement thumbnail generation later using AWS Lambda or a separate service
-        
-        // Create video document with S3 URL
+        // Create video document with S3 URLs
         const newVideo = new Video({
             title: req.body.title,
             description: req.body.description,
-            videoURL: req.file.location, // S3 URL from multer-s3
-            thumbnailURL: 'https://via.placeholder.com/320x180', // Placeholder for now
+            videoURL: videoFile.location, // S3 URL from multer-s3
+            thumbnailURL: thumbnailFile ? thumbnailFile.location : 'https://via.placeholder.com/320x180',
             creator: req.userID,
             duration: 0
         });
