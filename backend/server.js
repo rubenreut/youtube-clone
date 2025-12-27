@@ -6,10 +6,8 @@ require('dotenv').config();
 console.log('Environment check:');
 console.log('- MongoDB URI exists:', !!process.env.MONGODB_URI);
 console.log('- JWT Secret exists:', !!process.env.JWT_SECRET);
-console.log('- AWS Access Key exists:', !!process.env.AWS_ACCESS_KEY_ID);
-console.log('- AWS Secret exists:', !!process.env.AWS_SECRET_ACCESS_KEY);
-console.log('- AWS Bucket:', process.env.AWS_BUCKET_NAME);
-console.log('- AWS Region:', process.env.AWS_REGION);
+console.log('- Supabase URL exists:', !!process.env.SUPABASE_URL);
+console.log('- Supabase Key exists:', !!process.env.SUPABASE_SERVICE_KEY);
 
 const express = require("express");
 const mongoose = require("mongoose");

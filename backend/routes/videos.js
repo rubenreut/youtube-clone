@@ -1,44 +1,47 @@
 const router = require('express').Router();
 const multer = require('multer');
-const multerS3 = require('multer-s3');
-const { S3Client } = require('@aws-sdk/client-s3');
 const path = require('path');
-const ffmpeg = require('fluent-ffmpeg');
+const { createClient } = require('@supabase/supabase-js');
 const Video = require('../models/Video');
 const verifyToken = require('../middleware/auth');
 
-// Configure AWS SDK v3
-const s3 = new S3Client({
-    region: process.env.AWS_REGION,
-    credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-    }
-});
+// Configure Supabase client
+const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_KEY
+);
 
-// Configure multer for S3
+// Configure multer to use memory storage
 const upload = multer({
-    storage: multerS3({
-        s3: s3,
-        bucket: process.env.AWS_BUCKET_NAME,
-        // Remove ACL since bucket might not have ACLs enabled
-        metadata: function (req, file, cb) {
-            cb(null, {fieldName: file.fieldname});
-        },
-        key: function (req, file, cb) {
-            const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9);
-            if(file.fieldname === 'thumbnail') {
-                cb(null, 'thumbnails/' + uniqueName + path.extname(file.originalname));
-            } else {
-                cb(null, 'videos/' + uniqueName + path.extname(file.originalname));
-            }
-        },
-        contentType: multerS3.AUTO_CONTENT_TYPE
-    }),
+    storage: multer.memoryStorage(),
     limits: {
         fileSize: 250 * 1024 * 1024 // 250MB limit
     }
 });
+
+// Helper function to upload file to Supabase Storage
+async function uploadToSupabase(file, bucket, folder) {
+    const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const fileName = `${folder}/${uniqueName}${path.extname(file.originalname)}`;
+
+    const { data, error } = await supabase.storage
+        .from(bucket)
+        .upload(fileName, file.buffer, {
+            contentType: file.mimetype,
+            upsert: false
+        });
+
+    if (error) {
+        throw new Error(`Supabase upload error: ${error.message}`);
+    }
+
+    // Get public URL
+    const { data: urlData } = supabase.storage
+        .from(bucket)
+        .getPublicUrl(fileName);
+
+    return urlData.publicUrl;
+}
 
 
 //GET all videos, when someone visit /videos, 
@@ -54,38 +57,39 @@ router.get('/', async (req, res) => {
     }
 });
 
-//POST upload video 
+//POST upload video
 
-router.post('/upload', verifyToken, (req, res, next) => {
-    upload.fields([
-        { name: 'video', maxCount: 1 },
-        { name: 'thumbnail', maxCount: 1 }
-    ])(req, res, function(err) {
-        if (err) {
-            console.error('Multer error:', err);
-            return res.status(500).json({ error: err.message });
-        }
-        next();
-    });
-}, async (req, res) => {
+router.post('/upload', verifyToken, upload.fields([
+    { name: 'video', maxCount: 1 },
+    { name: 'thumbnail', maxCount: 1 }
+]), async (req, res) => {
     try {
         console.log('Upload request received');
-        console.log('Files:', req.files);
+        console.log('Files:', req.files ? Object.keys(req.files) : 'none');
         console.log('Body:', req.body);
-        
+
         if(!req.files || !req.files.video) {
             return res.status(400).json({error: 'No video file provided'});
         }
 
         const videoFile = req.files.video[0];
         const thumbnailFile = req.files.thumbnail ? req.files.thumbnail[0] : null;
-        
-        // Create video document with S3 URLs
+
+        // Upload video to Supabase Storage
+        const videoURL = await uploadToSupabase(videoFile, 'youtubevideos', 'videos');
+
+        // Upload thumbnail if provided
+        let thumbnailURL = 'https://via.placeholder.com/320x180';
+        if (thumbnailFile) {
+            thumbnailURL = await uploadToSupabase(thumbnailFile, 'youtubevideos', 'thumbnails');
+        }
+
+        // Create video document with Supabase URLs
         const newVideo = new Video({
             title: req.body.title,
             description: req.body.description,
-            videoURL: videoFile.location, // S3 URL from multer-s3
-            thumbnailURL: thumbnailFile ? thumbnailFile.location : 'https://via.placeholder.com/320x180',
+            videoURL: videoURL,
+            thumbnailURL: thumbnailURL,
             creator: req.userID,
             duration: 0
         });
@@ -93,7 +97,7 @@ router.post('/upload', verifyToken, (req, res, next) => {
         // Save video document
         await newVideo.save();
         res.json({message: 'Video Uploaded!', video: newVideo});
-        
+
     }
     catch(error){
         console.error('Upload error:', error);
