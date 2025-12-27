@@ -41,6 +41,15 @@
   font-weight: 500;
 }
 
+.sidebar-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sidebar-item.disabled:hover {
+  background-color: transparent;
+}
+
 .sidebar hr {
   margin: 12px 16px;
   border: none;
