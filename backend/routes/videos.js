@@ -44,12 +44,14 @@ async function uploadToSupabase(file, bucket, folder) {
 }
 
 
-//GET all videos, when someone visit /videos, 
+//GET all videos, when someone visit /videos,
 //gets all videos from mongoDB Video.find()
 //res.json(videos) sends them back as JSON
 router.get('/', async (req, res) => {
     try{
-        const videos = await Video.find();
+        const videos = await Video.find()
+            .populate('creator', 'username channelName profilePicture')
+            .sort({ uploadDate: -1 });
         res.json(videos);
     }
     catch(error){
