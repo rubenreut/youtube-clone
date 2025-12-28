@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const mongoose = require('mongoose');
 const User = require('../models/User');
 const Video = require('../models/Video');
 const verifyToken = require('../middleware/auth');
@@ -114,14 +115,16 @@ router.post('/me/history', verifyToken, async(req, res) => {
 // GET user's library (uploads + liked videos)
 router.get('/me/library', verifyToken, async(req, res) => {
     try {
+        const userId = new mongoose.Types.ObjectId(req.userID);
+
         // Get user's uploaded videos
-        const uploads = await Video.find({ creator: req.userID })
+        const uploads = await Video.find({ creator: userId })
             .populate('creator', 'username channelName profilePicture')
             .sort({ uploadDate: -1 });
 
         // Get videos user has liked
         const likedVideos = await Video.find({
-            likes: req.userID
+            likes: userId
         })
         .populate('creator', 'username channelName profilePicture')
         .sort({ uploadDate: -1 });
