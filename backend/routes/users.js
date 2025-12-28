@@ -33,6 +33,108 @@ router.get('/channels/:userId', async(req, res) => {
     }
 });
 
+// GET videos from subscribed channels
+router.get('/me/subscriptions', verifyToken, async(req, res) => {
+    try {
+        const user = await User.findById(req.userID);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Get videos from all subscribed channels
+        const videos = await Video.find({
+            creator: { $in: user.subscribedChannels }
+        })
+        .populate('creator', 'username channelName profilePicture')
+        .sort({ uploadDate: -1 });
+
+        res.json(videos);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// GET user's watch history
+router.get('/me/history', verifyToken, async(req, res) => {
+    try {
+        const user = await User.findById(req.userID)
+            .populate({
+                path: 'watchHistory.video',
+                populate: { path: 'creator', select: 'username channelName profilePicture' }
+            });
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Return history sorted by most recent
+        const history = user.watchHistory
+            .filter(h => h.video) // Filter out deleted videos
+            .sort((a, b) => new Date(b.watchedAt) - new Date(a.watchedAt));
+
+        res.json(history);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// POST add video to watch history
+router.post('/me/history', verifyToken, async(req, res) => {
+    try {
+        const { videoId } = req.body;
+        const user = await User.findById(req.userID);
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Remove existing entry for this video (to update timestamp)
+        user.watchHistory = user.watchHistory.filter(
+            h => h.video.toString() !== videoId
+        );
+
+        // Add to beginning of history
+        user.watchHistory.unshift({
+            video: videoId,
+            watchedAt: new Date()
+        });
+
+        // Keep only last 100 videos in history
+        if (user.watchHistory.length > 100) {
+            user.watchHistory = user.watchHistory.slice(0, 100);
+        }
+
+        await user.save();
+        res.json({ message: 'Added to history' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// GET user's library (uploads + liked videos)
+router.get('/me/library', verifyToken, async(req, res) => {
+    try {
+        // Get user's uploaded videos
+        const uploads = await Video.find({ creator: req.userID })
+            .populate('creator', 'username channelName profilePicture')
+            .sort({ uploadDate: -1 });
+
+        // Get videos user has liked
+        const likedVideos = await Video.find({
+            likes: req.userID
+        })
+        .populate('creator', 'username channelName profilePicture')
+        .sort({ uploadDate: -1 });
+
+        res.json({
+            uploads,
+            likedVideos
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // SUBSCRIBE/UNSUBSCRIBE to channel
 router.post('/:id/subscribe', verifyToken, async(req, res) => {
     try{

@@ -17,7 +17,23 @@ function VideoPage(){
     useEffect(() => {
         fetchVideo();
         fetchComments();
+        addToHistory();
     }, [id]);
+
+    const addToHistory = async () => {
+        const token = localStorage.getItem('token');
+        if (!token) return; // Only track for logged-in users
+
+        try {
+            await axios.post(`${API_URL}/api/users/me/history`,
+                { videoId: id },
+                { headers: { 'auth-token': token } }
+            );
+        } catch (error) {
+            // Silently fail - history tracking shouldn't break the video page
+            console.log('Could not add to history');
+        }
+    };
 
     const fetchVideo = async() => {
         try{

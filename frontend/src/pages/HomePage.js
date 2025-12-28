@@ -37,19 +37,19 @@ function HomePage(){
                     <AiFillHome size={20} />
                     <span>Home</span>
                 </Link>
-                <div className="sidebar-item disabled">
+                <Link to="/subscriptions" className="sidebar-item">
                     <MdOutlineSubscriptions size={20} />
                     <span>Subscriptions</span>
-                </div>
+                </Link>
                 <hr />
-                <div className="sidebar-item disabled">
+                <Link to="/library" className="sidebar-item">
                     <MdOutlineVideoLibrary size={20} />
                     <span>Library</span>
-                </div>
-                <div className="sidebar-item disabled">
+                </Link>
+                <Link to="/history" className="sidebar-item">
                     <MdHistory size={20} />
                     <span>History</span>
-                </div>
+                </Link>
             </div>
             
             <div className="main-content">

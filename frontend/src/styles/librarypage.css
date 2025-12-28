@@ -1,0 +1,91 @@
+.library-page {
+    padding: 24px 48px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.library-page h1 {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 24px;
+}
+
+.library-page .library-section {
+    margin-bottom: 40px;
+}
+
+.library-page .library-section h2 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #0f0f0f;
+}
+
+.library-page .empty-message {
+    color: #606060;
+    font-size: 14px;
+}
+
+.library-page .video-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.library-page .video-card {
+    cursor: pointer;
+}
+
+.library-page .video-card img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.library-page .video-info {
+    margin-top: 8px;
+}
+
+.library-page .video-info h3 {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 4px 0;
+    color: #0f0f0f;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.library-page .video-info a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.library-page .video-stats {
+    font-size: 12px;
+    color: #606060;
+    margin: 0;
+}
+
+.library-page .error {
+    color: #cc0000;
+    margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+    .library-page {
+        padding: 16px;
+    }
+
+    .library-page .video-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .library-page .video-row {
+        grid-template-columns: 1fr;
+    }
+}

@@ -9,6 +9,9 @@ import VideoPage from './pages/VideoPage';
 import SearchPage from './pages/SearchPage';
 import ChannelPage from './pages/ChannelPage';
 import EditVideoPage from './pages/EditVideoPage';
+import SubscriptionsPage from './pages/SubscriptionsPage';
+import HistoryPage from './pages/HistoryPage';
+import LibraryPage from './pages/LibraryPage';
 import {ThemeProvider} from './context/ThemeContext';
 
 
@@ -41,7 +44,9 @@ function App(){
               <Route path="/channel/:userId" element={<ChannelPage />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path ="/edit-video/:videoId" element ={<EditVideoPage/>}/>
-      
+              <Route path="/subscriptions" element={<SubscriptionsPage />} />
+              <Route path="/history" element={<HistoryPage />} />
+              <Route path="/library" element={<LibraryPage />} />
             </Routes>
           </Layout>
         </div>
