@@ -94,3 +94,36 @@
         aspect-ratio: 16/9;
     }
 }
+
+/* DARK MODE STYLES */
+body.dark-mode .history-page {
+    background-color: #0f0f0f;
+}
+
+body.dark-mode .history-page h1 {
+    color: #f1f1f1;
+}
+
+body.dark-mode .history-page .empty-state {
+    color: #aaaaaa;
+}
+
+body.dark-mode .history-page .history-info h3 {
+    color: #f1f1f1;
+}
+
+body.dark-mode .history-page .history-info a {
+    color: #f1f1f1;
+}
+
+body.dark-mode .history-page .channel-name {
+    color: #aaaaaa;
+}
+
+body.dark-mode .history-page .watched-at {
+    color: #717171;
+}
+
+body.dark-mode .history-page .error {
+    color: #ff6b6b;
+}

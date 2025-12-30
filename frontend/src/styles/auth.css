@@ -67,3 +67,37 @@
   color: #065fd4;
   text-decoration: none;
 }
+
+/* DARK MODE STYLES */
+body.dark-mode .login-page,
+body.dark-mode .register-page {
+  background-color: #212121;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+body.dark-mode .login-page h2,
+body.dark-mode .register-page h2 {
+  color: #f1f1f1;
+}
+
+body.dark-mode .login-page input,
+body.dark-mode .register-page input {
+  background-color: #121212;
+  border-color: #333;
+  color: #f1f1f1;
+}
+
+body.dark-mode .login-page input::placeholder,
+body.dark-mode .register-page input::placeholder {
+  color: #717171;
+}
+
+body.dark-mode .login-page p,
+body.dark-mode .register-page p {
+  color: #aaaaaa;
+}
+
+body.dark-mode .login-page a,
+body.dark-mode .register-page a {
+  color: #3ea6ff;
+}

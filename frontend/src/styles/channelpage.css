@@ -148,3 +148,52 @@
 .video-actions button:first-child:hover {
   background-color: #ffe5e5;
 }
+
+/* DARK MODE STYLES */
+body.dark-mode .channel-page {
+  background-color: #0f0f0f;
+}
+
+body.dark-mode .channel-header {
+  background: #212121;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+body.dark-mode .channel-header h1 {
+  color: #f1f1f1;
+}
+
+body.dark-mode .channel-header p {
+  color: #aaaaaa;
+}
+
+body.dark-mode .channel-videos {
+  background: #212121;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+body.dark-mode .channel-videos h2 {
+  color: #f1f1f1;
+}
+
+body.dark-mode .channel-video-card h3 {
+  color: #f1f1f1;
+}
+
+body.dark-mode .channel-video-card p {
+  color: #aaaaaa;
+}
+
+body.dark-mode .video-actions button {
+  background: #383838;
+  border-color: #333;
+  color: #f1f1f1;
+}
+
+body.dark-mode .video-actions button:hover {
+  background-color: #484848;
+}
+
+body.dark-mode .video-actions button:first-child:hover {
+  background-color: #502626;
+}

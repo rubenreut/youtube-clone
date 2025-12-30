@@ -101,3 +101,41 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* DARK MODE STYLES */
+body.dark-mode .subscriptions-page {
+    background-color: #0f0f0f;
+}
+
+body.dark-mode .subscriptions-page h1 {
+    color: #f1f1f1;
+}
+
+body.dark-mode .subscriptions-page .empty-state {
+    color: #aaaaaa;
+}
+
+body.dark-mode .subscriptions-page .avatar-circle {
+    background: #383838;
+    color: #aaaaaa;
+}
+
+body.dark-mode .subscriptions-page .video-details h3 {
+    color: #f1f1f1;
+}
+
+body.dark-mode .subscriptions-page .video-details a {
+    color: #f1f1f1;
+}
+
+body.dark-mode .subscriptions-page .channel-name {
+    color: #aaaaaa;
+}
+
+body.dark-mode .subscriptions-page .video-stats {
+    color: #aaaaaa;
+}
+
+body.dark-mode .subscriptions-page .error {
+    color: #ff6b6b;
+}

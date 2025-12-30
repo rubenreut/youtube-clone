@@ -89,3 +89,32 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* DARK MODE STYLES */
+body.dark-mode .library-page {
+    background-color: #0f0f0f;
+}
+
+body.dark-mode .library-page h1 {
+    color: #f1f1f1;
+}
+
+body.dark-mode .library-page .library-section h2 {
+    color: #f1f1f1;
+}
+
+body.dark-mode .library-page .empty-message {
+    color: #aaaaaa;
+}
+
+body.dark-mode .library-page .video-info h3 {
+    color: #f1f1f1;
+}
+
+body.dark-mode .library-page .video-stats {
+    color: #aaaaaa;
+}
+
+body.dark-mode .library-page .error {
+    color: #ff6b6b;
+}

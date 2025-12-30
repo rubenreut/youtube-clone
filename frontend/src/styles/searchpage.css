@@ -50,3 +50,24 @@
   color: #606060;
   font-size: 12px;
 }
+
+/* DARK MODE STYLES */
+body.dark-mode .search-page {
+  background-color: #0f0f0f;
+}
+
+body.dark-mode .search-result:hover {
+  background-color: #272727;
+}
+
+body.dark-mode .search-result h3 {
+  color: #f1f1f1;
+}
+
+body.dark-mode .search-result p {
+  color: #aaaaaa;
+}
+
+body.dark-mode .search-result small {
+  color: #aaaaaa;
+}

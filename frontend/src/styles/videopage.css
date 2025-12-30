@@ -369,4 +369,113 @@
   margin: 2px 0 0 0;
 }
 
+/* DARK MODE STYLES */
+body.dark-mode .video-page {
+  background-color: #0f0f0f;
+}
 
+body.dark-mode .video-info {
+  background: #212121;
+}
+
+body.dark-mode .video-info h1 {
+  color: #f1f1f1;
+}
+
+body.dark-mode .video-stats {
+  border-bottom-color: #333;
+}
+
+body.dark-mode .video-stats span {
+  color: #aaaaaa;
+}
+
+body.dark-mode .video-actions button {
+  background: #383838;
+  color: #f1f1f1;
+}
+
+body.dark-mode .video-actions button:hover {
+  background: #484848;
+}
+
+body.dark-mode .video-actions button.liked {
+  background: #263850;
+  color: #3ea6ff;
+}
+
+body.dark-mode .video-actions button.disliked {
+  background: #502626;
+  color: #ff6b6b;
+}
+
+body.dark-mode .video-description {
+  background: #272727;
+}
+
+body.dark-mode .video-description:hover {
+  background: #3a3a3a;
+}
+
+body.dark-mode .video-description p {
+  color: #f1f1f1;
+}
+
+body.dark-mode .comments-section {
+  background: #212121;
+}
+
+body.dark-mode .comments-header h3 {
+  color: #f1f1f1;
+}
+
+body.dark-mode .comment-input {
+  background: transparent;
+  color: #f1f1f1;
+  border-bottom-color: #717171;
+}
+
+body.dark-mode .comment-input:focus {
+  border-bottom-color: #f1f1f1;
+}
+
+body.dark-mode .cancel-btn {
+  color: #aaaaaa;
+}
+
+body.dark-mode .cancel-btn:hover {
+  background: #383838;
+}
+
+body.dark-mode .comment-btn:disabled {
+  background: #383838;
+  color: #717171;
+}
+
+body.dark-mode .comment-avatar {
+  background: #717171;
+}
+
+body.dark-mode .comment-author {
+  color: #f1f1f1;
+}
+
+body.dark-mode .comment-time {
+  color: #aaaaaa;
+}
+
+body.dark-mode .comment-text {
+  color: #f1f1f1;
+}
+
+body.dark-mode .channel-details h3 {
+  color: #f1f1f1;
+}
+
+body.dark-mode .channel-details p {
+  color: #aaaaaa;
+}
+
+body.dark-mode .channel-info-link {
+  color: #f1f1f1;
+}
