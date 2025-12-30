@@ -87,6 +87,29 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Seed fake views and durations (one-time use endpoint)
+router.post('/seed-views', async (req, res) => {
+    try {
+        const videos = await Video.find({});
+
+        for (const video of videos) {
+            // Generate random views between 1K and 500K
+            const fakeViews = Math.floor(Math.random() * 499000) + 1000;
+            // Generate random duration between 30 seconds and 20 minutes
+            const fakeDuration = Math.floor(Math.random() * 1170) + 30;
+
+            await Video.findByIdAndUpdate(video._id, {
+                views: fakeViews,
+                duration: fakeDuration
+            });
+        }
+
+        res.json({ message: `Updated ${videos.length} videos with fake views and durations` });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to seed views' });
+    }
+});
+
 // GET recommended videos (for sidebar)
 router.get('/recommended/:videoId', async (req, res) => {
     try {

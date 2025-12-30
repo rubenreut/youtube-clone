@@ -293,7 +293,8 @@ function VideoPage(){
                         <div className="channel-info-card">
                             <Link to={`/channel/${video.creator._id}`} className="channel-info-link">
                                 <div className="channel-avatar-large">
-                                    {video.creator?.profilePicture ? (
+                                    {video.creator?.profilePicture &&
+                                     !video.creator.profilePicture.includes('placeholder') ? (
                                         <img src={video.creator.profilePicture} alt={video.creator.channelName}/>
                                     ) : (
                                         <div className="avatar-placeholder">
