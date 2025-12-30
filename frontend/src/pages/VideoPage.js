@@ -2,6 +2,7 @@ import API_URL from '../config';
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
+import { formatTimeAgo, formatViewCount, formatSubscriberCount } from '../utils/formatters';
 
 function VideoPage(){
     const{id} = useParams();
@@ -302,12 +303,12 @@ function VideoPage(){
                                 </div>
                                 <div className="channel-details">
                                     <h3>{video.creator?.channelName || 'Unknown channel'}</h3>
-                                    <p>{video.creator?.subscribers?.length || 0} subscribers</p>
+                                    <p>{formatSubscriberCount(video.creator?.subscribers?.length || 0)}</p>
                                 </div>
                             </Link>
                         </div>
                         <div className="video-stats">
-                            <span>{video.views || 0} views • {new Date(video.uploadDate).toLocaleDateString()}</span>
+                            <span>{formatViewCount(video.views || 0)} views • {formatTimeAgo(video.uploadDate)}</span>
                             <div className="video-actions">
                                 <button
                                     onClick={handleLike}
@@ -389,7 +390,7 @@ function VideoPage(){
                                                     {comment.author?.username || 'Unknown User'}
                                                 </span>
                                                 <span className="comment-time">
-                                                    {new Date(comment.createdAt).toLocaleDateString()}
+                                                    {formatTimeAgo(comment.createdAt)}
                                                 </span>
                                             </div>
                                             <p className="comment-text">{comment.content}</p>
@@ -449,7 +450,7 @@ function VideoPage(){
                                                                 {reply.author?.username || 'Unknown User'}
                                                             </span>
                                                             <span className="comment-time">
-                                                                {new Date(reply.createdAt).toLocaleDateString()}
+                                                                {formatTimeAgo(reply.createdAt)}
                                                             </span>
                                                         </div>
                                                         <p className="comment-text">{reply.content}</p>
@@ -483,7 +484,7 @@ function VideoPage(){
                                     <div className="recommended-info">
                                         <h4>{rec.title}</h4>
                                         <p>{rec.creator?.channelName || 'Unknown'}</p>
-                                        <span>{rec.views || 0} views</span>
+                                        <span>{formatViewCount(rec.views || 0)} views • {formatTimeAgo(rec.createdAt)}</span>
                                     </div>
                                 </Link>
                             ))}

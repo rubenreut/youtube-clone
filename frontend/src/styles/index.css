@@ -1,6 +1,6 @@
 /* Main stylesheet that imports all component styles */
 
-/* Base styles and resets */
+/* Base styles, resets, and CSS variables */
 @import './base.css';
 
 /* Component styles */
@@ -15,101 +15,3 @@
 @import './librarypage.css';
 @import './historypage.css';
 @import './subscriptionspage.css';
-
-body.dark-mode {
-  background-color: #0f0f0f;
-  color: #f1f1f1;
-}
-
-body.dark-mode .navbar {
-  background: #212121;
-  border-bottom: 1px solid #333;
-}
-
-body.dark-mode .navbar a {
-  color: #f1f1f1;
-}
-
-body.dark-mode .navbar a:hover {
-  color: #ffffff;
-}
-
-body.dark-mode .nav-links a {
-  color: #f1f1f1;
-}
-
-body.dark-mode .nav-links a:hover {
-  background: #383838;
-  color: #ffffff;
-}
-
-body.dark-mode .search-form input {
-  background: #121212;
-  border-color: #333;
-  color: white;
-}
-
-body.dark-mode .search-form button {
-  background: #272727;
-  border-color: #333;
-  color: white;
-}
-
-body.dark-mode .video-card {
-  background: #212121;
-}
-
-body.dark-mode .video-card h3 {
-  color: #f1f1f1;
-}
-
-body.dark-mode .video-card p {
-  color: #aaaaaa;
-}
-
-body.dark-mode .sidebar {
-  background: #212121;
-  border-right-color: #333;
-}
-
-body.dark-mode .sidebar-item {
-  color: #f1f1f1;
-}
-
-body.dark-mode .sidebar-item:hover {
-  background: #383838;
-}
-
-body.dark-mode .sidebar-item.active {
-  background: #383838;
-}
-
-body.dark-mode textarea,
-body.dark-mode input,
-body.dark-mode select {
-  background: #121212;
-  color: white;
-  border-color: #333;
-}
-
-body.dark-mode button {
-  background: #383838;
-  color: white;
-  border-color: #555;
-}
-
-body.dark-mode button:hover {
-  background: #484848;
-}
-
-body.dark-mode .channel-video h2 {
-  color: #f1f1f1;
-}
-
-body.dark-mode .channel-video-card h3 {
-  color: #f1f1f1;
-}
-
-body.dark-mode .channel-video-card p {
-  color: #aaaaaa;
-}
