@@ -11,6 +11,10 @@
 @import './searchpage.css';
 @import './auth.css';
 @import './channelpage.css';
+@import './watchlaterpage.css';
+@import './librarypage.css';
+@import './historypage.css';
+@import './subscriptionspage.css';
 
 body.dark-mode {
   background-color: #0f0f0f;

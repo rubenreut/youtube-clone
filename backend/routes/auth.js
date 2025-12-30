@@ -35,10 +35,11 @@ router.post('/register', async (req, res) => {
         //save to database
         const savedUser = await user.save();
 
-        //create and send toke 
+        //create and send token with expiration
         const token = jwt.sign(
             {_id: savedUser._id},
-            process.env.JWT_SECRET
+            process.env.JWT_SECRET,
+            { expiresIn: '7d' } // Token expires in 7 days
         );
 
         res.json({
@@ -77,10 +78,11 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ error: 'Email or password is wrong'});
         }
 
-        //create and send token
+        //create and send token with expiration
         const token = jwt.sign(
             {_id: user._id},
-            process.env.JWT_SECRET
+            process.env.JWT_SECRET,
+            { expiresIn: '7d' } // Token expires in 7 days
         );
 
         res.json({

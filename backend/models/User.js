@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true,
         lowercase: true,
-        trime: true
+        trim: true
     },
 
     password: {
@@ -65,6 +65,11 @@ const userSchema = new mongoose.Schema({
             type: Date,
             default: Date.now
         }
+    }],
+
+    watchLater: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Video'
     }],
 
     createdAt: {

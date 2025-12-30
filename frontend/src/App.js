@@ -12,6 +12,7 @@ import EditVideoPage from './pages/EditVideoPage';
 import SubscriptionsPage from './pages/SubscriptionsPage';
 import HistoryPage from './pages/HistoryPage';
 import LibraryPage from './pages/LibraryPage';
+import WatchLaterPage from './pages/WatchLaterPage';
 import {ThemeProvider} from './context/ThemeContext';
 
 
@@ -47,6 +48,7 @@ function App(){
               <Route path="/subscriptions" element={<SubscriptionsPage />} />
               <Route path="/history" element={<HistoryPage />} />
               <Route path="/library" element={<LibraryPage />} />
+              <Route path="/watch-later" element={<WatchLaterPage />} />
             </Routes>
           </Layout>
         </div>

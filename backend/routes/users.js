@@ -112,10 +112,17 @@ router.post('/me/history', verifyToken, async(req, res) => {
     }
 });
 
-// GET user's library (uploads + liked videos)
+// GET user's library (uploads + liked videos + watch later)
 router.get('/me/library', verifyToken, async(req, res) => {
     try {
         const userId = new mongoose.Types.ObjectId(req.userID);
+
+        // Get user with watch later populated
+        const user = await User.findById(req.userID)
+            .populate({
+                path: 'watchLater',
+                populate: { path: 'creator', select: 'username channelName profilePicture' }
+            });
 
         // Get user's uploaded videos
         const uploads = await Video.find({ creator: userId })
@@ -131,8 +138,83 @@ router.get('/me/library', verifyToken, async(req, res) => {
 
         res.json({
             uploads,
-            likedVideos
+            likedVideos,
+            watchLater: user?.watchLater || []
         });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// GET watch later list
+router.get('/me/watch-later', verifyToken, async(req, res) => {
+    try {
+        const user = await User.findById(req.userID)
+            .populate({
+                path: 'watchLater',
+                populate: { path: 'creator', select: 'username channelName profilePicture' }
+            });
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json(user.watchLater || []);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// POST add to watch later
+router.post('/me/watch-later', verifyToken, async(req, res) => {
+    try {
+        const { videoId } = req.body;
+        const user = await User.findById(req.userID);
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Check if video exists
+        const video = await Video.findById(videoId);
+        if (!video) {
+            return res.status(404).json({ error: 'Video not found' });
+        }
+
+        // Check if already in watch later
+        const alreadyAdded = user.watchLater.some(id => id.toString() === videoId);
+
+        if (alreadyAdded) {
+            // Remove from watch later
+            user.watchLater = user.watchLater.filter(id => id.toString() !== videoId);
+            await user.save();
+            return res.json({ added: false, message: 'Removed from Watch Later' });
+        } else {
+            // Add to watch later
+            user.watchLater.push(videoId);
+            await user.save();
+            return res.json({ added: true, message: 'Added to Watch Later' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// DELETE remove from watch later
+router.delete('/me/watch-later/:videoId', verifyToken, async(req, res) => {
+    try {
+        const user = await User.findById(req.userID);
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        user.watchLater = user.watchLater.filter(
+            id => id.toString() !== req.params.videoId
+        );
+
+        await user.save();
+        res.json({ message: 'Removed from Watch Later' });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

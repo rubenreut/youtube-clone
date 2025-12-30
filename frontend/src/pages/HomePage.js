@@ -2,33 +2,61 @@ import {useState, useEffect} from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import {AiFillHome} from 'react-icons/ai';
-import {MdOutlineSubscriptions, MdOutlineVideoLibrary, MdHistory} from 'react-icons/md';
+import {MdOutlineSubscriptions, MdOutlineVideoLibrary, MdHistory, MdWatchLater} from 'react-icons/md';
 import API_URL from '../config';
 
 function HomePage(){
     const[videos, setVideos ] = useState([]);
     const[loading, setLoading] = useState(true);
     const[error, setError] = useState('');
+    const[hasMore, setHasMore] = useState(false);
+    const[page, setPage] = useState(1);
+    const[loadingMore, setLoadingMore] = useState(false);
 
     useEffect(() => {
         fetchVideos();
     }, []);
 
-    const fetchVideos = async () => {
+    const fetchVideos = async (pageNum = 1) => {
         try{
-            const response = await axios.get(`${API_URL}/api/videos`);
-            setVideos(response.data);
-            setLoading(false);
+            if (pageNum === 1) {
+                setLoading(true);
+            } else {
+                setLoadingMore(true);
+            }
 
+            const response = await axios.get(`${API_URL}/api/videos?page=${pageNum}&limit=20`);
+
+            // Handle both old format (array) and new format (object with pagination)
+            const videoData = response.data.videos || response.data;
+            const pagination = response.data.pagination;
+
+            if (pageNum === 1) {
+                setVideos(videoData);
+            } else {
+                setVideos(prev => [...prev, ...videoData]);
+            }
+
+            setHasMore(pagination?.hasMore || false);
+            setPage(pageNum);
+            setLoading(false);
+            setLoadingMore(false);
         }
-        catch(error){
+        catch(err){
             setError('Failed to load videos');
             setLoading(false);
+            setLoadingMore(false);
         }
     };
 
-    if(loading) return <div>Loading Videos...</div>;
-    if(error) return <div>{error}</div>;
+    const loadMore = () => {
+        if (!loadingMore && hasMore) {
+            fetchVideos(page + 1);
+        }
+    };
+
+    if(loading) return <div className="loading">Loading Videos...</div>;
+    if(error) return <div className="error">{error}</div>;
 
     return (
         <div className="HomePage">
@@ -50,8 +78,12 @@ function HomePage(){
                     <MdHistory size={20} />
                     <span>History</span>
                 </Link>
+                <Link to="/watch-later" className="sidebar-item">
+                    <MdWatchLater size={20} />
+                    <span>Watch Later</span>
+                </Link>
             </div>
-            
+
             <div className="main-content">
                 <div className="video-grid">
                 {videos.length === 0 ? (<p>No Videos Yet. Be the first to upload </p>):(
@@ -63,7 +95,7 @@ function HomePage(){
                                 alt={video.title}
                             />
                         </Link>
-                        
+
                         <div className="video-info-container">
                             <div className="channel-avatar">
                                 <div className="avatar-circle">
@@ -81,9 +113,21 @@ function HomePage(){
                             </div>
                         </div>
                     </div>
-                ))   
+                ))
                 )}
                 </div>
+
+                {hasMore && (
+                    <div className="load-more-container">
+                        <button
+                            onClick={loadMore}
+                            disabled={loadingMore}
+                            className="load-more-btn"
+                        >
+                            {loadingMore ? 'Loading...' : 'Load More'}
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -16,7 +16,7 @@ const commentSchema = new mongoose.Schema({
 
     video: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'video',
+        ref: 'Video',
         required: true
     },
 
@@ -25,11 +25,11 @@ const commentSchema = new mongoose.Schema({
         ref: 'User'
     }],
 
-    parentComment: [{
+    parentComment: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Comment',
         default: null
-    }], // this is for replies if null then its main comment
+    }, // this is for replies - if null then its main comment
 
     createdAt: {
         type: Date,

@@ -5,6 +5,9 @@ const { createClient } = require('@supabase/supabase-js');
 const Video = require('../models/Video');
 const verifyToken = require('../middleware/auth');
 
+// Feature flag for uploads
+const UPLOADS_ENABLED = process.env.UPLOADS_ENABLED === 'true' || false;
+
 // Configure Supabase client
 const supabase = createClient(
     process.env.SUPABASE_URL,
@@ -43,33 +46,99 @@ async function uploadToSupabase(file, bucket, folder) {
     return urlData.publicUrl;
 }
 
+// Helper function to escape regex special characters (prevents ReDoS)
+function escapeRegex(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
-//GET all videos, when someone visit /videos,
-//gets all videos from mongoDB Video.find()
-//res.json(videos) sends them back as JSON
+// GET all videos with pagination
 router.get('/', async (req, res) => {
-    try{
-        const videos = await Video.find()
-            .populate('creator', 'username channelName profilePicture')
-            .sort({ uploadDate: -1 });
-        res.json(videos);
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 20;
+        const skip = (page - 1) * limit;
+        const category = req.query.category;
+
+        // Build query
+        const query = category ? { category } : {};
+
+        const [videos, total] = await Promise.all([
+            Video.find(query)
+                .populate('creator', 'username channelName profilePicture')
+                .sort({ uploadDate: -1 })
+                .skip(skip)
+                .limit(limit),
+            Video.countDocuments(query)
+        ]);
+
+        res.json({
+            videos,
+            pagination: {
+                page,
+                limit,
+                total,
+                pages: Math.ceil(total / limit),
+                hasMore: page * limit < total
+            }
+        });
     }
     catch(error){
-        res.status(500).json({error: error.message});
+        res.status(500).json({error: 'Failed to load videos'});
     }
 });
 
-//POST upload video
+// GET recommended videos (for sidebar)
+router.get('/recommended/:videoId', async (req, res) => {
+    try {
+        const currentVideo = await Video.findById(req.params.videoId);
+        if (!currentVideo) {
+            return res.status(404).json({ error: 'Video not found' });
+        }
 
+        // Get videos from same category, excluding current video
+        const recommended = await Video.find({
+            _id: { $ne: req.params.videoId },
+            $or: [
+                { category: currentVideo.category },
+                { creator: currentVideo.creator }
+            ]
+        })
+        .populate('creator', 'username channelName profilePicture')
+        .sort({ views: -1 })
+        .limit(10);
+
+        // If not enough videos, get random popular videos
+        if (recommended.length < 5) {
+            const additional = await Video.find({
+                _id: { $nin: [req.params.videoId, ...recommended.map(v => v._id)] }
+            })
+            .populate('creator', 'username channelName profilePicture')
+            .sort({ views: -1 })
+            .limit(10 - recommended.length);
+
+            recommended.push(...additional);
+        }
+
+        res.json(recommended);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to load recommendations' });
+    }
+});
+
+// POST upload video
 router.post('/upload', verifyToken, upload.fields([
     { name: 'video', maxCount: 1 },
     { name: 'thumbnail', maxCount: 1 }
 ]), async (req, res) => {
-    try {
-        console.log('Upload request received');
-        console.log('Files:', req.files ? Object.keys(req.files) : 'none');
-        console.log('Body:', req.body);
+    // Check if uploads are enabled
+    if (!UPLOADS_ENABLED) {
+        return res.status(403).json({
+            error: 'Video uploads are currently disabled',
+            uploadsEnabled: false
+        });
+    }
 
+    try {
         if(!req.files || !req.files.video) {
             return res.status(400).json({error: 'No video file provided'});
         }
@@ -103,11 +172,11 @@ router.post('/upload', verifyToken, upload.fields([
     }
     catch(error){
         console.error('Upload error:', error);
-        res.status(500).json({error: error.message});
+        res.status(500).json({error: 'Upload failed. Please try again.'});
     }
 });
 
-//LIKE a video
+// LIKE a video
 router.post('/:id/like', verifyToken, async (req, res) => {
     try{
         if(!req.userID) {
@@ -121,7 +190,7 @@ router.post('/:id/like', verifyToken, async (req, res) => {
         }
 
         const userId = req.userID.toString();
-        
+
         // Check if already liked - handle null values in array
         const alreadyLiked = video.likes.some(id => id && id.toString() === userId);
         const dislikedIndex = video.dislikes.findIndex(id => id && id.toString() === userId);
@@ -147,12 +216,12 @@ router.post('/:id/like', verifyToken, async (req, res) => {
         });
     }
     catch(error){
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: 'Failed to like video' });
     }
 
 });
 
-//DISLIKE a video
+// DISLIKE a video
 router.post('/:id/dislike', verifyToken, async (req, res) => {
         try{
             if(!req.userID) {
@@ -167,7 +236,7 @@ router.post('/:id/dislike', verifyToken, async (req, res) => {
 
             // Convert userID string to ObjectId for comparison
             const userId = req.userID.toString();
-            
+
             // Check if already disliked
             const alreadyDisliked = video.dislikes.some(id => id.toString() === userId);
             const likedIndex = video.likes.findIndex(id => id.toString() === userId);
@@ -177,7 +246,7 @@ router.post('/:id/dislike', verifyToken, async (req, res) => {
                 video.dislikes = video.dislikes.filter(id => id.toString() !== userId);
             }
             else{
-                // Add dislike 
+                // Add dislike
                 video.dislikes.push(req.userID);
                 // Remove like if exists
                 if(likedIndex > -1){
@@ -191,41 +260,72 @@ router.post('/:id/dislike', verifyToken, async (req, res) => {
                 dislikes: video.dislikes.length,
                 userDisliked: !alreadyDisliked
             });
-            
+
         }
         catch(error){
-                res.status(500).json({ error: error.message});
+                res.status(500).json({ error: 'Failed to dislike video'});
             }
     });
 
-    //SEARCH videos
+    // SEARCH videos (with ReDoS protection)
     router.get('/search', async(req, res) => {
 
         try{
-            const {q} = req.query; //get search query from the url
+            const {q} = req.query; // get search query from the url
 
             if(!q){
                 return res.status(400).json({ error: 'Search query required'});
             }
 
-            //search in title and description
-            const videos = await Video.find({
-                $or: [
-                    {title: {$regex: q, $options: 'i'}},
-                    { description: {$regex: q, $options: 'i'}},
-                ]
-            })
-            .populate('creator', 'username channelName')
-            .sort({ views: -1});
+            // Limit search query length to prevent abuse
+            if(q.length > 100){
+                return res.status(400).json({ error: 'Search query too long'});
+            }
 
-            res.json(videos);
+            // Escape special regex characters to prevent ReDoS attacks
+            const safeQuery = escapeRegex(q);
+
+            // Search in title and description with pagination
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 20;
+            const skip = (page - 1) * limit;
+
+            const [videos, total] = await Promise.all([
+                Video.find({
+                    $or: [
+                        {title: {$regex: safeQuery, $options: 'i'}},
+                        {description: {$regex: safeQuery, $options: 'i'}},
+                    ]
+                })
+                .populate('creator', 'username channelName')
+                .sort({ views: -1})
+                .skip(skip)
+                .limit(limit),
+                Video.countDocuments({
+                    $or: [
+                        {title: {$regex: safeQuery, $options: 'i'}},
+                        {description: {$regex: safeQuery, $options: 'i'}},
+                    ]
+                })
+            ]);
+
+            res.json({
+                videos,
+                pagination: {
+                    page,
+                    limit,
+                    total,
+                    pages: Math.ceil(total / limit),
+                    hasMore: page * limit < total
+                }
+            });
         } catch(error) {
-            res.status(500).json({ error: error.message});
+            res.status(500).json({ error: 'Search failed'});
         }
     });
 
 
-    //Get single video
+    // Get single video
     router.get('/:id', async (req, res) => {
         try{
             const video = await Video.findById(req.params.id).populate('creator', 'username channelName profilePicture subscribers');
@@ -234,14 +334,14 @@ router.post('/:id/dislike', verifyToken, async (req, res) => {
                 return res.status(404).json({ error: 'Video Not Found'});
             }
 
-            //incremenet views
+            // increment views
             video.views +=1;
             await video.save();
 
             res.json(video);
         }
         catch(error){
-            res.status(500).json({ error: error.message});
+            res.status(500).json({ error: 'Failed to load video'});
         }
     });
 
@@ -249,7 +349,7 @@ router.post('/:id/dislike', verifyToken, async (req, res) => {
 router.put('/:id', verifyToken, async (req, res) => {
     try {
         const video = await Video.findById(req.params.id);
-        
+
         if (!video) {
             return res.status(404).json({ error: 'Video not found' });
         }
@@ -265,10 +365,10 @@ router.put('/:id', verifyToken, async (req, res) => {
         if (req.body.category !== undefined) video.category = req.body.category;
 
         await video.save();
-        
+
         res.json({ message: 'Video updated successfully', video });
     } catch(error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: 'Failed to update video' });
     }
 });
 
@@ -276,7 +376,7 @@ router.put('/:id', verifyToken, async (req, res) => {
 router.delete('/:id', verifyToken, async (req, res) => {
     try {
         const video = await Video.findById(req.params.id);
-        
+
         if (!video) {
             return res.status(404).json({ error: 'Video not found' });
         }
@@ -288,14 +388,11 @@ router.delete('/:id', verifyToken, async (req, res) => {
 
         // Delete the video from database
         await Video.findByIdAndDelete(req.params.id);
-        
+
         res.json({ message: 'Video deleted successfully' });
     } catch(error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: 'Failed to delete video' });
     }
 });
 
 module.exports = router;
-
-
-

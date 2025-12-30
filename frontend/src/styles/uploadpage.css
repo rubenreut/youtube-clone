@@ -83,3 +83,47 @@ progress {
   height: 8px;
   margin-top: 10px;
 }
+
+/* UPLOADS DISABLED STATE */
+.uploads-disabled {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.uploads-disabled h2 {
+  color: #cc0000;
+  margin-bottom: 16px;
+}
+
+.uploads-disabled p {
+  color: #606060;
+  margin: 8px 0;
+}
+
+.uploads-disabled button {
+  margin-top: 24px;
+  padding: 12px 24px;
+  background: #065fd4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.uploads-disabled button:hover {
+  background: #0556c3;
+}
+
+.upload-error {
+  color: #cc0000;
+  margin-bottom: 16px;
+}
+
+body.dark-mode .uploads-disabled h2 {
+  color: #ff6b6b;
+}
+
+body.dark-mode .uploads-disabled p {
+  color: #aaaaaa;
+}

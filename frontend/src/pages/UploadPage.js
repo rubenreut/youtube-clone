@@ -1,5 +1,5 @@
 import API_URL from '../config';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,12 +12,44 @@ function UploadPage(){
     const [uploadProgress, setUploadProgress] = useState(0);
     const [thumbnail, setThumbnail] = useState(null);
     const [thumbnailPreview, setThumbnailPreview] = useState(null);
+    const [uploadsEnabled, setUploadsEnabled] = useState(true);
+    const [checkingConfig, setCheckingConfig] = useState(true);
     const navigate = useNavigate();
+
+    // Check if uploads are enabled
+    useEffect(() => {
+        const checkUploadsEnabled = async () => {
+            try {
+                const response = await axios.get(`${API_URL}/api/config`);
+                setUploadsEnabled(response.data.uploadsEnabled);
+            } catch (err) {
+                // If we can't reach the config endpoint, assume uploads might be disabled
+                setUploadsEnabled(false);
+            } finally {
+                setCheckingConfig(false);
+            }
+        };
+
+        checkUploadsEnabled();
+    }, []);
+
+    // Cleanup object URLs to prevent memory leaks
+    useEffect(() => {
+        return () => {
+            if (thumbnailPreview) {
+                URL.revokeObjectURL(thumbnailPreview);
+            }
+        };
+    }, [thumbnailPreview]);
 
     const handleFileSelect = (e) => {
         const file = e.target.files[0];
 
         if(file && file.type.startsWith('video/')) {
+            // Clean up previous thumbnail preview
+            if (thumbnailPreview) {
+                URL.revokeObjectURL(thumbnailPreview);
+            }
             setVideoFile(file);
             generateThumbnail(file);
         }
@@ -32,24 +64,25 @@ function UploadPage(){
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
 
-        video.src = URL.createObjectURL(videoFile);
+        const objectUrl = URL.createObjectURL(videoFile);
+        video.src = objectUrl;
         video.preload = 'metadata';
 
         video.onseeked = () => {
             // Always 16:9 canvas
             canvas.width = 320;
             canvas.height = 180;
-            
+
             // Fill with black background
             context.fillStyle = '#000000';
             context.fillRect(0, 0, 320, 180);
-            
+
             // Calculate aspect ratio and positioning
             const videoAspect = video.videoWidth / video.videoHeight;
             const canvasAspect = 320 / 180;
-            
+
             let drawWidth, drawHeight, offsetX, offsetY;
-            
+
             if (videoAspect > canvasAspect) {
                 // Video is wider - fit by width
                 drawWidth = 320;
@@ -63,23 +96,35 @@ function UploadPage(){
                 offsetX = (320 - drawWidth) / 2;
                 offsetY = 0;
             }
-            
+
             context.drawImage(video, offsetX, offsetY, drawWidth, drawHeight);
-            
+
             canvas.toBlob((blob) => {
                 setThumbnail(blob);
-                setThumbnailPreview(URL.createObjectURL(blob));
-                console.log('Thumbnail generated!');
+                const previewUrl = URL.createObjectURL(blob);
+                setThumbnailPreview(previewUrl);
             }, 'image/jpeg', 0.7);
+
+            // Clean up the video object URL
+            URL.revokeObjectURL(objectUrl);
         };
 
         video.onloadedmetadata = () => {
-            video.currentTime = Math.min(1, video.duration / 2); // Capture at 1 second or halfway
+            video.currentTime = Math.min(1, video.duration / 2);
+        };
+
+        video.onerror = () => {
+            URL.revokeObjectURL(objectUrl);
         };
     };
 
     const handleUpload = async (e) => {
         e.preventDefault();
+
+        if (!uploadsEnabled) {
+            setError('Uploads are currently disabled');
+            return;
+        }
 
         if(!videoFile){
             setError('Please select a video');
@@ -100,7 +145,7 @@ function UploadPage(){
         try{
             const token = localStorage.getItem('token');
 
-            const response = await axios.post(`${API_URL}/api/videos/upload`, formData, {
+            await axios.post(`${API_URL}/api/videos/upload`, formData, {
                 headers: {
                     'auth-token': token
                 },
@@ -110,21 +155,42 @@ function UploadPage(){
                 }
             });
 
-            alert('Video uploaded successfully!');
             navigate('/');
         }
-        catch(error){
-            setError(error.response?.data?.error || 'Upload failed');
+        catch(err){
+            if (err.response?.data?.uploadsEnabled === false) {
+                setError('Video uploads are currently disabled');
+                setUploadsEnabled(false);
+            } else {
+                setError(err.response?.data?.error || 'Upload failed');
+            }
             setUploading(false);
         }
     };
 
+    if (checkingConfig) {
+        return <div className="upload-page"><p>Loading...</p></div>;
+    }
+
+    if (!uploadsEnabled) {
+        return (
+            <div className="upload-page">
+                <div className="uploads-disabled">
+                    <h2>Uploads Temporarily Disabled</h2>
+                    <p>Video uploads are currently disabled by the administrator.</p>
+                    <p>Please check back later or contact support for more information.</p>
+                    <button onClick={() => navigate('/')}>Go Home</button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="upload-page">
             <h2>Upload Video</h2>
-            
-            {error && <p style={{color: 'red'}}>{error}</p>}
-            
+
+            {error && <p className="upload-error">{error}</p>}
+
             <form onSubmit={handleUpload}>
                 <div>
                     <label>Video File:</label>

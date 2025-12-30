@@ -225,3 +225,62 @@ body.dark-mode .avatar-circle {
   background: #383838;
   color: #aaaaaa;
 }
+
+/* LOAD MORE BUTTON */
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+}
+
+.load-more-btn {
+  padding: 12px 24px;
+  background: transparent;
+  border: 1px solid #e5e5e5;
+  border-radius: 18px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #065fd4;
+  transition: background 0.2s;
+}
+
+.load-more-btn:hover {
+  background: #def1ff;
+}
+
+.load-more-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+body.dark-mode .load-more-btn {
+  border-color: #333;
+  color: #3ea6ff;
+}
+
+body.dark-mode .load-more-btn:hover {
+  background: #263850;
+}
+
+/* Loading and error states */
+.loading, .error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  font-size: 16px;
+  color: #606060;
+}
+
+.error {
+  color: #cc0000;
+}
+
+body.dark-mode .loading {
+  color: #aaaaaa;
+}
+
+body.dark-mode .error {
+  color: #ff6b6b;
+}
